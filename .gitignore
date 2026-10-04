@@ -1,0 +1,16 @@
+# Environment variables (API Keys - DO NOT COMMIT)
+.env
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# VS Code / IDE settings
+.vscode/
+.idea/

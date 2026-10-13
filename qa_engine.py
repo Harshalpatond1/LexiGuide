@@ -7,12 +7,10 @@ from retriever import model as _embed_model
 
 # -- Gemini setup --------------------------------------------------------------
 GEMINI_MODELS = [
-    "gemini-3.1-flash-lite",
-    "gemini-flash-lite-latest",
-    "gemini-3.5-flash-lite",
-    "gemini-3.5-flash",
     "gemini-3.8-flash",
-    "gemini-3.6-flash",
+    "gemini-3.5-flash-lite",
+    "gemini-flash-latest",
+    "gemini-flash-lite-latest",
 ]
 _gemini_client = None
 _qa_cache = {}

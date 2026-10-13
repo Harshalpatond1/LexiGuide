@@ -1,1297 +1,2787 @@
 <!DOCTYPE html>
 <html lang="en">
+
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LexiGuide — AI Legal Assistant</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --v-deep:#0A0716;
-  --v-border:rgba(168,85,247,0.22);--v-border-soft:rgba(168,85,247,0.12);
-  --v1:#7C3AED;--v2:#A855F7;--v3:#C084FC;--v4:#E9D5FF;
-  --text:#F5F3FF;--muted:#A78BCA;--subtle:#736494;
-  --emerald:#10B981;--emerald-bg:rgba(16,185,129,0.12);
-  --amber:#F59E0B;--amber-bg:rgba(245,158,11,0.12);
-  --rose:#F43F5E;--rose-bg:rgba(244,63,94,0.12);
-  --glow:rgba(124,58,237,0.35);
-  --r-xl:24px;--r-lg:18px;--r-md:12px;--r-sm:8px;
-}
-html{scroll-behavior:smooth}
-::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--v-deep)}::-webkit-scrollbar-thumb{background:var(--v1);border-radius:99px}
-body{
-  background:var(--v-deep);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;
-  background-image:
-    radial-gradient(ellipse 90% 55% at 50% -10%,rgba(124,58,237,0.26),transparent 70%),
-    radial-gradient(ellipse 60% 40% at 90% 75%,rgba(168,85,247,0.13),transparent 65%),
-    radial-gradient(ellipse 40% 30% at 5% 50%,rgba(109,40,217,0.12),transparent 60%);
-  background-attachment:fixed;
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LexiGuide — AI Legal Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap"
+    rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
 
-/* LAYOUT */
-.container{max-width:1060px;margin:0 auto;padding:0 24px 80px}
+    :root {
+      --v-deep: #0A0716;
+      --v-border: rgba(168, 85, 247, 0.22);
+      --v-border-soft: rgba(168, 85, 247, 0.12);
+      --v1: #7C3AED;
+      --v2: #A855F7;
+      --v3: #C084FC;
+      --v4: #E9D5FF;
+      --text: #F5F3FF;
+      --muted: #A78BCA;
+      --subtle: #736494;
+      --emerald: #10B981;
+      --emerald-bg: rgba(16, 185, 129, 0.12);
+      --amber: #F59E0B;
+      --amber-bg: rgba(245, 158, 11, 0.12);
+      --rose: #F43F5E;
+      --rose-bg: rgba(244, 63, 94, 0.12);
+      --glow: rgba(124, 58, 237, 0.35);
+      --r-xl: 24px;
+      --r-lg: 18px;
+      --r-md: 12px;
+      --r-sm: 8px;
+    }
 
-/* NAVBAR */
-.navbar{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:16px 28px;background:rgba(10,7,22,0.85);backdrop-filter:blur(22px);
-  border-bottom:1px solid var(--v-border-soft);position:sticky;top:0;z-index:100;
-}
-.nav-brand{display:flex;align-items:center;gap:12px}
-.nav-logo{
-  width:40px;height:40px;background:linear-gradient(135deg,var(--v1),var(--v2));
-  border-radius:12px;display:flex;align-items:center;justify-content:center;
-  font-size:20px;box-shadow:0 4px 16px var(--glow);
-}
-.nav-title-group{display:flex;flex-direction:column}
-.nav-title{
-  font-family:'Playfair Display',serif;font-size:22px;font-weight:700;
-  background:linear-gradient(135deg,#fff,var(--v3));-webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-0.5px;
-}
-.nav-sub{font-size:11px;color:var(--muted);font-weight:500;letter-spacing:0.5px}
-.nav-right{display:flex;align-items:center;gap:12px}
-.lang-selector{
-  display:inline-flex;align-items:center;background:rgba(124,58,237,0.12);
-  border:1px solid var(--v-border);border-radius:999px;padding:3px;gap:2px;
-}
-.lang-btn{
-  background:transparent;border:none;border-radius:999px;padding:5px 12px;
-  font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;
-  transition:all 0.2s ease;font-family:inherit;
-}
-.lang-btn:hover{color:#fff}
-.lang-btn.active{
-  background:linear-gradient(135deg,var(--v1),var(--v2));color:#fff;
-  box-shadow:0 2px 10px var(--glow);
-}
-.status-pill{
-  display:inline-flex;align-items:center;gap:7px;padding:6px 14px;
-  background:rgba(124,58,237,0.12);border:1px solid var(--v-border);
-  border-radius:999px;font-size:11.5px;font-weight:600;color:var(--v3);
-}
-.status-dot{width:7px;height:7px;background:var(--emerald);border-radius:50%;box-shadow:0 0 8px var(--emerald)}
+    html {
+      scroll-behavior: smooth
+    }
 
-/* HERO */
-.hero{padding:60px 0 38px;text-align:center;position:relative}
-.hero::before{
-  content:'';position:absolute;top:45%;left:50%;transform:translate(-50%,-50%);
-  width:750px;height:320px;background:radial-gradient(ellipse,rgba(124,58,237,0.20),transparent 70%);
-  pointer-events:none;z-index:0;
-}
-.hero>*{position:relative;z-index:1}
-.hero-badge{
-  display:inline-flex;align-items:center;gap:8px;
-  background:rgba(124,58,237,0.12);border:1px solid var(--v-border);
-  border-radius:999px;padding:7px 18px;font-size:12px;font-weight:600;
-  color:var(--v3);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:24px;
-}
-.hero-title{
-  font-family:'Playfair Display',serif;font-size:clamp(34px,6vw,58px);font-weight:800;
-  line-height:1.15;letter-spacing:-1.5px;margin-bottom:18px;color:#fff;
-}
-.gradient-text{
-  background:linear-gradient(135deg,#C084FC,#A855F7,#7C3AED,#C084FC);background-size:220%;
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  animation:shimmer 4s linear infinite;
-}
-@keyframes shimmer{0%{background-position:0% 50%}100%{background-position:200% 50%}}
-.hero-sub{font-size:clamp(14.5px,2vw,16.5px);color:var(--muted);max-width:620px;margin:0 auto 32px;line-height:1.75}
+    ::-webkit-scrollbar {
+      width: 6px
+    }
 
-/* STAT PILLS */
-.pills{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin-bottom:38px}
-.pill{
-  display:inline-flex;align-items:center;gap:7px;
-  background:rgba(124,58,237,0.07);border:1px solid var(--v-border-soft);
-  border-radius:999px;padding:7px 16px;font-size:12.5px;color:var(--muted);font-weight:500;
-}
-.pill .dot{width:6px;height:6px;background:var(--v2);border-radius:50%;box-shadow:0 0 6px var(--v2)}
+    ::-webkit-scrollbar-track {
+      background: var(--v-deep)
+    }
 
-/* UPLOAD CARD */
-.upload-card{
-  background:linear-gradient(135deg,rgba(18,13,38,0.95),rgba(26,19,56,0.8));
-  border:1px solid var(--v-border);border-radius:var(--r-xl);padding:36px;
-  box-shadow:0 12px 40px rgba(0,0,0,0.4),0 0 40px rgba(124,58,237,0.08) inset;
-  backdrop-filter:blur(20px);margin-bottom:28px;
-}
-.drop-area{
-  border:2px dashed rgba(168,85,247,0.38);border-radius:var(--r-lg);
-  padding:38px 24px;text-align:center;background:rgba(124,58,237,0.04);
-  transition:all 0.25s ease;cursor:pointer;
-}
-.drop-area:hover,.drop-area.dragover{
-  border-color:var(--v2);background:rgba(124,58,237,0.12);
-  transform:translateY(-2px);box-shadow:0 8px 30px rgba(124,58,237,0.15);
-}
-.drop-icon{font-size:46px;margin-bottom:12px;filter:drop-shadow(0 0 14px rgba(168,85,247,0.4))}
-.drop-title{font-size:16px;font-weight:600;color:var(--text);margin-bottom:6px}
-.drop-sub{font-size:13px;color:var(--subtle);margin-bottom:18px}
-.btn-browse{
-  display:inline-flex;align-items:center;gap:8px;padding:10px 24px;
-  background:linear-gradient(135deg,var(--v1),var(--v2));border:none;border-radius:999px;
-  font-size:13px;font-weight:600;color:#fff;cursor:pointer;box-shadow:0 4px 18px var(--glow);
-  transition:all 0.2s;font-family:inherit;
-}
-.btn-browse:hover{transform:translateY(-1px);box-shadow:0 8px 26px var(--glow)}
-.file-input{display:none}
+    ::-webkit-scrollbar-thumb {
+      background: var(--v1);
+      border-radius: 99px
+    }
 
-/* SAMPLES BAR */
-.samples-bar{
-  display:flex;align-items:center;justify-content:center;flex-wrap:wrap;
-  gap:10px;margin-top:20px;padding-top:18px;border-top:1px solid var(--v-border-soft);
-}
-.samples-label{font-size:12px;color:var(--subtle);font-weight:600;text-transform:uppercase;letter-spacing:1px}
-.sample-btn{
-  display:inline-flex;align-items:center;gap:6px;padding:6px 14px;
-  background:rgba(124,58,237,0.1);border:1px solid var(--v-border-soft);
-  border-radius:999px;font-size:12px;color:var(--v3);cursor:pointer;font-family:inherit;
-  font-weight:500;transition:all 0.2s;
-}
-.sample-btn:hover{
-  background:rgba(124,58,237,0.22);border-color:var(--v-border);
-  color:#fff;transform:translateY(-1px);box-shadow:0 4px 12px var(--glow);
-}
+    body {
+      background: var(--v-deep);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      background-image:
+        radial-gradient(ellipse 90% 55% at 50% -10%, rgba(124, 58, 237, 0.26), transparent 70%),
+        radial-gradient(ellipse 60% 40% at 90% 75%, rgba(168, 85, 247, 0.13), transparent 65%),
+        radial-gradient(ellipse 40% 30% at 5% 50%, rgba(109, 40, 217, 0.12), transparent 60%);
+      background-attachment: fixed;
+    }
 
-/* PROCESSING STATE */
-.processing-bar{
-  display:none;align-items:center;justify-content:center;gap:12px;
-  padding:20px;margin-bottom:20px;background:rgba(124,58,237,0.08);
-  border:1px solid var(--v-border);border-radius:var(--r-md);color:var(--v3);font-size:14px;
-}
-.processing-bar.show{display:flex}
-.spinner{
-  width:22px;height:22px;border:2.5px solid rgba(168,85,247,0.2);
-  border-top-color:var(--v2);border-radius:50%;animation:spin 0.7s linear infinite;
-}
-@keyframes spin{to{transform:rotate(360deg)}}
+    /* LAYOUT */
+    .container {
+      max-width: 1060px;
+      margin: 0 auto;
+      padding: 0 24px 80px
+    }
 
-/* DOCUMENT INTELLIGENCE CARD */
-.doc-card{
-  display:none;background:linear-gradient(135deg,rgba(18,13,38,0.96),rgba(28,21,60,0.85));
-  border:1px solid var(--v-border);border-radius:var(--r-xl);padding:28px 32px;
-  margin-bottom:28px;box-shadow:0 10px 30px rgba(0,0,0,0.3);position:relative;
-}
-.doc-card.show{display:block;animation:fadeUp 0.35s ease}
-.doc-card-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px}
-.doc-card-title-group{display:flex;align-items:center;gap:12px}
-.doc-type-badge{
-  padding:5px 14px;background:linear-gradient(135deg,var(--v1),var(--v2));
-  border-radius:999px;font-size:12px;font-weight:700;color:#fff;letter-spacing:0.5px;
-}
-.doc-filename{font-size:16px;font-weight:700;color:var(--text)}
-.btn-reset{
-  padding:6px 14px;background:transparent;border:1px solid var(--v-border-soft);
-  border-radius:999px;color:var(--muted);font-size:12px;cursor:pointer;
-  transition:all 0.2s;font-family:inherit;
-}
-.btn-reset:hover{background:rgba(244,63,94,0.12);border-color:var(--rose);color:var(--rose)}
-.doc-stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px}
-.doc-stat{
-  background:rgba(124,58,237,0.08);border:1px solid var(--v-border-soft);
-  border-radius:var(--r-md);padding:10px 14px;display:flex;align-items:center;gap:10px;
-}
-.doc-stat-icon{font-size:18px}
-.doc-stat-val{font-size:13px;font-weight:700;color:var(--text)}
-.doc-stat-label{font-size:11px;color:var(--subtle)}
-.doc-summary-box{
-  background:rgba(124,58,237,0.06);border-left:3px solid var(--v2);
-  border-radius:0 var(--r-md) var(--r-md) 0;padding:12px 18px;font-size:13.5px;
-  color:var(--muted);line-height:1.65;
-}
+    /* NAVBAR */
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 28px;
+      background: rgba(10, 7, 22, 0.85);
+      backdrop-filter: blur(22px);
+      border-bottom: 1px solid var(--v-border-soft);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
 
-/* TABS SYSTEM */
-.tabs-wrap{display:none}
-.tabs-wrap.show{display:block;animation:fadeUp 0.35s ease}
-.tab-nav{
-  display:flex;gap:6px;padding:6px;background:rgba(18,13,38,0.9);
-  border:1px solid var(--v-border-soft);border-radius:var(--r-lg);margin-bottom:20px;
-}
-.tab-btn{
-  flex:1;padding:13px 18px;background:transparent;border:none;border-radius:var(--r-md);
-  color:var(--muted);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;
-  transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;
-}
-.tab-btn.active{
-  background:linear-gradient(135deg,rgba(124,58,237,0.35),rgba(168,85,247,0.22));
-  color:#fff;border:1px solid var(--v-border);box-shadow:0 4px 16px rgba(124,58,237,0.25);
-}
-.tab-btn:hover:not(.active){color:var(--text);background:rgba(124,58,237,0.08)}
-.tab-pane{
-  display:none;background:linear-gradient(135deg,rgba(18,13,38,0.95),rgba(25,18,52,0.85));
-  border:1px solid var(--v-border-soft);border-radius:var(--r-xl);padding:36px;
-  box-shadow:0 12px 40px rgba(0,0,0,0.3);backdrop-filter:blur(20px);
-}
-.tab-pane.active{display:block;animation:fadeUp 0.25s ease}
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px
+    }
 
-/* SECTION HEADER */
-.section-tag{
-  font-size:11.5px;font-weight:700;letter-spacing:2px;color:var(--v3);
-  text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:8px;
-}
-.section-h2{
-  font-family:'Playfair Display',serif;font-size:26px;font-weight:700;
-  margin-bottom:8px;color:#fff;letter-spacing:-0.5px;
-}
-.section-desc{font-size:14px;color:var(--muted);line-height:1.65;margin-bottom:24px}
+    .nav-logo {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--v1), var(--v2));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 4px 16px var(--glow);
+    }
 
-/* SUGGESTION CHIPS */
-.chips-title{font-size:11.5px;font-weight:700;letter-spacing:1.5px;color:var(--subtle);text-transform:uppercase;margin-bottom:12px}
-.chips-container{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
-.chip{
-  display:inline-flex;align-items:center;gap:6px;background:rgba(124,58,237,0.08);
-  border:1px solid var(--v-border-soft);border-radius:999px;padding:8px 16px;
-  font-size:13px;color:var(--muted);cursor:pointer;transition:all 0.15s ease;
-}
-.chip:hover{
-  background:rgba(124,58,237,0.22);border-color:var(--v-border);
-  color:var(--v3);transform:translateY(-1px);
-}
-.chip:active{transform:scale(0.97)}
+    .nav-title-group {
+      display: flex;
+      flex-direction: column
+    }
 
-/* QUESTION INPUT */
-.ask-box{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap}
-.input-query{
-  flex:1;min-width:260px;background:rgba(10,7,22,0.85);border:1.5px solid var(--v-border-soft);
-  border-radius:var(--r-md);padding:14px 20px;font-size:15px;color:#fff;font-family:inherit;
-  outline:none;transition:all 0.2s;
-}
-.input-query::placeholder{color:var(--subtle)}
-.input-query:focus{
-  border-color:var(--v2);box-shadow:0 0 0 3px rgba(124,58,237,0.22),0 0 20px rgba(124,58,237,0.15);
-}
-.btn-ask{
-  padding:14px 30px;background:linear-gradient(135deg,var(--v1),var(--v2));border:none;
-  border-radius:var(--r-md);font-size:14px;font-weight:700;color:#fff;cursor:pointer;
-  transition:all 0.2s;box-shadow:0 4px 20px var(--glow);display:inline-flex;align-items:center;gap:8px;
-}
-.btn-ask:hover{transform:translateY(-2px);box-shadow:0 8px 30px var(--glow)}
-.btn-ask:active{transform:translateY(0)}
-.btn-ask:disabled{opacity:0.4;cursor:not-allowed;transform:none}
+    .nav-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #fff, var(--v3));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+    }
 
-/* RESULT / ANSWER CARD */
-.answer-container{margin-top:24px;display:none}
-.answer-container.show{display:block;animation:fadeUp 0.35s ease}
-.answer-card{
-  background:linear-gradient(135deg,rgba(124,58,237,0.12),rgba(168,85,247,0.06));
-  border:1px solid var(--v-border);border-left:4px solid var(--v2);
-  border-radius:0 var(--r-xl) var(--r-xl) 0;padding:26px 30px;margin-bottom:16px;
-  position:relative;overflow:hidden;box-shadow:0 8px 30px rgba(124,58,237,0.12);
-}
-.answer-header{
-  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;
-  gap:10px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--v-border-soft);
-}
-.answer-q-tag{font-size:13px;font-weight:600;color:var(--v3)}
-.answer-main-text{
-  font-family:'Playfair Display',serif;font-size:22px;line-height:1.55;
-  color:#fff;font-weight:600;margin-bottom:18px;
-}
-.meta-badges{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:18px}
-.badge{
-  display:inline-flex;align-items:center;gap:6px;padding:5px 14px;
-  border-radius:999px;font-size:12px;font-weight:600;
-}
-.badge-page{background:rgba(124,58,237,0.14);border:1px solid var(--v-border);color:var(--v3)}
-.badge-conf{background:var(--emerald-bg);border:1px solid rgba(16,185,129,0.3);color:var(--emerald)}
-.badge-none{background:var(--rose-bg);border:1px solid rgba(244,63,94,0.3);color:var(--rose)}
-.conf-bar{width:50px;height:5px;background:rgba(16,185,129,0.2);border-radius:99px;overflow:hidden;display:inline-block;vertical-align:middle}
-.conf-bar-fill{height:100%;background:var(--emerald);border-radius:99px}
+    .nav-sub {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 500;
+      letter-spacing: 0.5px
+    }
 
-/* SOURCE CLAUSE ACCORDION */
-.clause-box{
-  background:rgba(10,7,22,0.7);border:1px solid var(--v-border-soft);
-  border-radius:var(--r-md);margin-top:14px;overflow:hidden;
-}
-.clause-header{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:12px 18px;background:rgba(124,58,237,0.06);cursor:pointer;
-  font-size:13px;font-weight:600;color:var(--muted);transition:all 0.2s;
-}
-.clause-header:hover{color:var(--v3);background:rgba(124,58,237,0.12)}
-.clause-content{
-  padding:16px 20px;font-size:13.5px;color:var(--muted);line-height:1.75;
-  border-top:1px solid var(--v-border-soft);font-family:monospace;white-space:pre-wrap;
-  background:rgba(8,5,18,0.9);display:none;
-}
-.clause-content.open{display:block}
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 12px
+    }
 
-/* Q&A HISTORY LOG */
-.history-section{margin-top:34px;padding-top:24px;border-top:1px solid var(--v-border-soft);display:none}
-.history-section.show{display:block}
-.history-title{font-size:13px;font-weight:700;color:var(--subtle);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px}
-.history-item{
-  background:rgba(124,58,237,0.04);border:1px solid var(--v-border-soft);
-  border-radius:var(--r-md);padding:14px 18px;margin-bottom:10px;
-}
-.history-q{font-size:13px;font-weight:600;color:var(--v3);margin-bottom:4px}
-.history-a{font-size:13px;color:var(--muted);line-height:1.5}
+    .lang-selector {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(124, 58, 237, 0.12);
+      border: 1px solid var(--v-border);
+      border-radius: 999px;
+      padding: 3px;
+      gap: 2px;
+    }
 
-/* SIMPLIFIER PANE */
-.simplify-action-box{
-  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;
-  gap:16px;padding:22px 26px;background:rgba(124,58,237,0.08);border:1px solid var(--v-border-soft);
-  border-radius:var(--r-lg);margin-bottom:28px;
-}
-.simplify-info h4{font-size:15px;font-weight:700;color:#fff;margin-bottom:4px}
-.simplify-info p{font-size:13px;color:var(--muted)}
-.btn-simplify{
-  padding:12px 26px;background:linear-gradient(135deg,var(--v1),var(--v2));
-  border:none;border-radius:var(--r-md);font-size:13.5px;font-weight:700;color:#fff;
-  cursor:pointer;transition:all 0.2s;box-shadow:0 4px 18px var(--glow);display:inline-flex;align-items:center;gap:8px;
-}
-.btn-simplify:hover{transform:translateY(-2px);box-shadow:0 8px 26px var(--glow)}
-.btn-simplify:disabled{opacity:0.4;cursor:not-allowed;transform:none}
+    .lang-btn {
+      background: transparent;
+      border: none;
+      border-radius: 999px;
+      padding: 5px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
 
-.simplified-card{
-  background:linear-gradient(135deg,rgba(18,13,38,0.9),rgba(28,21,60,0.7));
-  border:1px solid var(--v-border-soft);border-left:4px solid var(--v2);
-  border-radius:0 var(--r-lg) var(--r-lg) 0;padding:24px 28px;margin-bottom:18px;
-  animation:fadeUp 0.3s ease;
-}
-.simplified-card h3{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--v3);margin-bottom:12px}
-.simplified-body{font-size:14px;color:var(--text);line-height:1.8}
-.simplified-body p{margin-bottom:10px}
-.simplified-body strong{color:var(--v4)}
-.simplified-body ul{margin-left:20px;margin-bottom:12px}
-.simplified-body li{margin-bottom:4px}
+    .lang-btn:hover {
+      color: #fff
+    }
 
-/* CLAUSES EXPLORER */
-.explorer-page{
-  background:rgba(10,7,22,0.8);border:1px solid var(--v-border-soft);
-  border-radius:var(--r-lg);padding:22px 26px;margin-bottom:16px;
-}
-.explorer-page-head{
-  display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--v-border-soft);
-}
-.explorer-page-num{font-size:12px;font-weight:700;color:var(--v3);letter-spacing:1px;text-transform:uppercase}
-.explorer-text{
-  font-family:monospace;font-size:13px;color:var(--muted);line-height:1.7;
-  white-space:pre-wrap;background:rgba(18,13,38,0.5);padding:14px;border-radius:var(--r-sm);
-}
+    .lang-btn.active {
+      background: linear-gradient(135deg, var(--v1), var(--v2));
+      color: #fff;
+      box-shadow: 0 2px 10px var(--glow);
+    }
 
-/* ALERTS & TOAST */
-.alert{
-  border-radius:var(--r-md);padding:12px 18px;font-size:13.5px;
-  margin-top:12px;display:none;animation:fadeUp 0.25s ease;
-}
-.alert.show{display:flex;align-items:center;gap:10px}
-.alert-warn{background:var(--amber-bg);border:1px solid rgba(245,158,11,0.3);color:var(--amber)}
-.alert-err{background:var(--rose-bg);border:1px solid rgba(244,63,94,0.3);color:var(--rose)}
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 14px;
+      background: rgba(124, 58, 237, 0.12);
+      border: 1px solid var(--v-border);
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--v3);
+    }
 
-/* FOOTER */
-.footer{
-  text-align:center;padding:50px 0 20px;color:var(--subtle);font-size:12.5px;line-height:1.8;
-}
-.footer-brand{font-weight:700;color:var(--v3)}
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--emerald);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--emerald)
+    }
 
-/* ANIMATION */
-@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    /* HERO */
+    .hero {
+      padding: 60px 0 38px;
+      text-align: center;
+      position: relative
+    }
 
-/* RESPONSIVE */
-@media(max-width:768px){
-  .navbar{padding:14px 18px}
-  .nav-sub{display:none}
-  .hero{padding:42px 0 28px}
-  .hero-title{letter-spacing:-1px}
-  .upload-card{padding:22px 16px}
-  .drop-area{padding:26px 14px}
-  .tab-pane{padding:22px 18px}
-  .tab-btn{font-size:13px;padding:10px 8px}
-  .ask-box{flex-direction:column}
-  .btn-ask{width:100%;justify-content:center}
-  .answer-card{padding:20px 18px}
-  .answer-main-text{font-size:18px}
-  .lang-btn{padding:4px 8px;font-size:11px}
-  .status-pill{display:none}
-}
-</style>
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 45%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 750px;
+      height: 320px;
+      background: radial-gradient(ellipse, rgba(124, 58, 237, 0.20), transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .hero>* {
+      position: relative;
+      z-index: 1
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(124, 58, 237, 0.12);
+      border: 1px solid var(--v-border);
+      border-radius: 999px;
+      padding: 7px 18px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--v3);
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(34px, 6vw, 58px);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -1.5px;
+      margin-bottom: 18px;
+      color: #fff;
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #C084FC, #A855F7, #7C3AED, #C084FC);
+      background-size: 220%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 4s linear infinite;
+    }
+
+    @keyframes shimmer {
+      0% {
+        background-position: 0% 50%
+      }
+
+      100% {
+        background-position: 200% 50%
+      }
+    }
+
+    .hero-sub {
+      font-size: clamp(14.5px, 2vw, 16.5px);
+      color: var(--muted);
+      max-width: 620px;
+      margin: 0 auto 32px;
+      line-height: 1.75
+    }
+
+    /* STAT PILLS */
+    .pills {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 38px
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(124, 58, 237, 0.07);
+      border: 1px solid var(--v-border-soft);
+      border-radius: 999px;
+      padding: 7px 16px;
+      font-size: 12.5px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .pill .dot {
+      width: 6px;
+      height: 6px;
+      background: var(--v2);
+      border-radius: 50%;
+      box-shadow: 0 0 6px var(--v2)
+    }
+
+    /* UPLOAD CARD */
+    .upload-card {
+      background: linear-gradient(135deg, rgba(18, 13, 38, 0.95), rgba(26, 19, 56, 0.8));
+      border: 1px solid var(--v-border);
+      border-radius: var(--r-xl);
+      padding: 36px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 0 40px rgba(124, 58, 237, 0.08) inset;
+      backdrop-filter: blur(20px);
+      margin-bottom: 28px;
+    }
+
+    .drop-area {
+      border: 2px dashed rgba(168, 85, 247, 0.38);
+      border-radius: var(--r-lg);
+      padding: 38px 24px;
+      text-align: center;
+      background: rgba(124, 58, 237, 0.04);
+      transition: all 0.25s ease;
+      cursor: pointer;
+    }
+
+    .drop-area:hover,
+    .drop-area.dragover {
+      border-color: var(--v2);
+      background: rgba(124, 58, 237, 0.12);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(124, 58, 237, 0.15);
+    }
+
+    .drop-icon {
+      font-size: 46px;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 0 14px rgba(168, 85, 247, 0.4))
+    }
+
+    .drop-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px
+    }
+
+    .drop-sub {
+      font-size: 13px;
+      color: var(--subtle);
+      margin-bottom: 18px
+    }
+
+    .btn-browse {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 24px;
+      background: linear-gradient(135deg, var(--v1), var(--v2));
+      border: none;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 4px 18px var(--glow);
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .btn-browse:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 26px var(--glow)
+    }
+
+    .file-input {
+      display: none
+    }
+
+    /* SAMPLES BAR */
+    .samples-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+      padding-top: 18px;
+      border-top: 1px solid var(--v-border-soft);
+    }
+
+    .samples-label {
+      font-size: 12px;
+      color: var(--subtle);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px
+    }
+
+    .sample-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: rgba(124, 58, 237, 0.1);
+      border: 1px solid var(--v-border-soft);
+      border-radius: 999px;
+      font-size: 12px;
+      color: var(--v3);
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .sample-btn:hover {
+      background: rgba(124, 58, 237, 0.22);
+      border-color: var(--v-border);
+      color: #fff;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px var(--glow);
+    }
+
+    /* PROCESSING STATE */
+    .processing-bar {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      background: rgba(124, 58, 237, 0.08);
+      border: 1px solid var(--v-border);
+      border-radius: var(--r-md);
+      color: var(--v3);
+      font-size: 14px;
+    }
+
+    .processing-bar.show {
+      display: flex
+    }
+
+    .spinner {
+      width: 22px;
+      height: 22px;
+      border: 2.5px solid rgba(168, 85, 247, 0.2);
+      border-top-color: var(--v2);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg)
+      }
+    }
+
+    /* DOCUMENT INTELLIGENCE CARD */
+    .doc-card {
+      display: none;
+      background: linear-gradient(135deg, rgba(18, 13, 38, 0.96), rgba(28, 21, 60, 0.85));
+      border: 1px solid var(--v-border);
+      border-radius: var(--r-xl);
+      padding: 28px 32px;
+      margin-bottom: 28px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      position: relative;
+    }
+
+    .doc-card.show {
+      display: block;
+      animation: fadeUp 0.35s ease
+    }
+
+    .doc-card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 16px
+    }
+
+    .doc-card-title-group {
+      display: flex;
+      align-items: center;
+      gap: 12px
+    }
+
+    .doc-type-badge {
+      padding: 5px 14px;
+      background: linear-gradient(135deg, var(--v1), var(--v2));
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.5px;
+    }
+
+    .doc-filename {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text)
+    }
+
+    .btn-reset {
+      padding: 6px 14px;
+      background: transparent;
+      border: 1px solid var(--v-border-soft);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .btn-reset:hover {
+      background: rgba(244, 63, 94, 0.12);
+      border-color: var(--rose);
+      color: var(--rose)
+    }
+
+    .doc-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px
+    }
+
+    .doc-stat {
+      background: rgba(124, 58, 237, 0.08);
+      border: 1px solid var(--v-border-soft);
+      border-radius: var(--r-md);
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .doc-stat-icon {
+      font-size: 18px
+    }
+
+    .doc-stat-val {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text)
+    }
+
+    .doc-stat-label {
+      font-size: 11px;
+      color: var(--subtle)
+    }
+
+    .doc-summary-box {
+      background: rgba(124, 58, 237, 0.06);
+      border-left: 3px solid var(--v2);
+      border-radius: 0 var(--r-md) var(--r-md) 0;
+      padding: 12px 18px;
+      font-size: 13.5px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    /* TABS SYSTEM */
+    .tabs-wrap {
+      display: none
+    }
+
+    .tabs-wrap.show {
+      display: block;
+      animation: fadeUp 0.35s ease
+    }
+
+    .tab-nav {
+      display: flex;
+      gap: 6px;
+      padding: 6px;
+      background: rgba(18, 13, 38, 0.9);
+      border: 1px solid var(--v-border-soft);
+      border-radius: var(--r-lg);
+      margin-bottom: 20px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 13px 18px;
+      background: transparent;
+      border: none;
+      border-radius: var(--r-md);
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.35), rgba(168, 85, 247, 0.22));
+      color: #fff;
+      border: 1px solid var(--v-border);
+      box-shadow: 0 4px 16px rgba(124, 58, 237, 0.25);
+    }
+
+    .tab-btn:hover:not(.active) {
+      color: var(--text);
+      background: rgba(124, 58, 237, 0.08)
+    }
+
+    .tab-pane {
+      display: none;
+      background: linear-gradient(135deg, rgba(18, 13, 38, 0.95), rgba(25, 18, 52, 0.85));
+      border: 1px solid var(--v-border-soft);
+      border-radius: var(--r-xl);
+      padding: 36px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(20px);
+    }
+
+    .tab-pane.active {
+      display: block;
+      animation: fadeUp 0.25s ease
+    }
+
+    /* SECTION HEADER */
+    .section-tag {
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--v3);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #fff;
+      letter-spacing: -0.5px;
+    }
+
+    .section-desc {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 24px
+    }
+
+    /* SUGGESTION CHIPS */
+    .chips-title {
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      color: var(--subtle);
+      text-transform: uppercase;
+      margin-bottom: 12px
+    }
+
+    .chips-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 24px
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(124, 58, 237, 0.08);
+      border: 1px solid var(--v-border-soft);
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-size: 13px;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .chip:hover {
+      background: rgba(124, 58, 237, 0.22);
+      border-color: var(--v-border);
+      color: var(--v3);
+      transform: translateY(-1px);
+    }
+
+    .chip:active {
+      transform: scale(0.97)
+    }
+
+    /* QUESTION INPUT */
+    .ask-box {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      flex-wrap: wrap
+    }
+
+    .input-query {
+      flex: 1;
+      min-width: 260px;
+      background: rgba(10, 7, 22, 0.85);
+      border: 1.5px solid var(--v-border-soft);
+      border-radius: var(--r-md);
+      padding: 14px 20px;
+      font-size: 15px;
+      color: #fff;
+      font-family: inherit;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .input-query::placeholder {
+      color: var(--subtle)
+    }
+
+    .input-query:focus {
+      border-color: var(--v2);
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.22), 0 0 20px rgba(124, 58, 237, 0.15);
+    }
+
+    .btn-ask {
+      padding: 14px 30px;
+      background: linear-gradient(135deg, var(--v1), var(--v2));
+      border: none;
+      border-radius: var(--r-md);
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 20px var(--glow);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-ask:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px var(--glow)
+    }
+
+    .btn-ask:active {
+      transform: translateY(0)
+    }
+
+    .btn-ask:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none
+    }
+
+    /* RESULT / ANSWER CARD */
+    .answer-container {
+      margin-top: 24px;
+      display: none
+    }
+
+    .answer-container.show {
+      display: block;
+      animation: fadeUp 0.35s ease
+    }
+
+    .answer-card {
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.12), rgba(168, 85, 247, 0.06));
+      border: 1px solid var(--v-border);
+      border-left: 4px solid var(--v2);
+      border-radius: 0 var(--r-xl) var(--r-xl) 0;
+      padding: 26px 30px;
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 30px rgba(124, 58, 237, 0.12);
+    }
+
+    .answer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--v-border-soft);
+    }
+
+    .answer-q-tag {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--v3)
+    }
+
+    .answer-main-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      line-height: 1.55;
+      color: #fff;
+      font-weight: 600;
+      margin-bottom: 18px;
+    }
+
+    .meta-badges {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .badge-page {
+      background: rgba(124, 58, 237, 0.14);
+      border: 1px solid var(--v-border);
+      color: var(--v3)
+    }
+
+    .badge-conf {
+      background: var(--emerald-bg);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--emerald)
+    }
+
+    .badge-none {
+      background: var(--rose-bg);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+      color: var(--rose)
+    }
+
+    .conf-bar {
+      width: 50px;
+      height: 5px;
+      background: rgba(16, 185, 129, 0.2);
+      border-radius: 99px;
+      overflow: hidden;
+      display: inline-block;
+      vertical-align: middle
+    }
+
+    .conf-bar-fill {
+      height: 100%;
+      background: var(--emerald);
+      border-radius: 99px
+    }
+
+    /* SOURCE CLAUSE ACCORDION */
+    .clause-box {
+      background: rgba(10, 7, 22, 0.7);
+      border: 1px solid var(--v-border-soft);
+      border-radius: var(--r-md);
+      margin-top: 14px;
+      overflow: hidden;
+    }
+
+    .clause-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 18px;
+      background: rgba(124, 58, 237, 0.06);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      transition: all 0.2s;
+    }
+
+    .clause-header:hover {
+      color: var(--v3);
+      background: rgba(124, 58, 237, 0.12)
+    }
+
+    .clause-content {
+      padding: 16px 20px;
+      font-size: 13.5px;
+      color: var(--muted);
+      line-height: 1.75;
+      border-top: 1px solid var(--v-border-soft);
+      font-family: monospace;
+      white-space: pre-wrap;
+      background: rgba(8, 5, 18, 0.9);
+      display: none;
+    }
+
+    .clause-content.open {
+      display: block
+    }
+
+    /* Q&A HISTORY LOG */
+    .history-section {
+      margin-top: 34px;
+      padding-top: 24px;
+      border-top: 1px solid var(--v-border-soft);
+      display: none
+    }
+
+    .history-section.show {
+      display: block
+    }
+
+    .history-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--subtle);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 14px
+    }
+
+    .history-item {
+      background: rgba(124, 58, 237, 0.04);
+      border: 1px solid var(--v-border-soft);
+      border-radius: var(--r-md);
+      padding: 14px 18px;
+      margin-bottom: 10px;
+    }
+
+    .history-q {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--v3);
+      margin-bottom: 4px
+    }
+
+    .history-a {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5
+    }
+
+    /* SIMPLIFIER PANE */
+    .simplify-action-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding: 22px 26px;
+      background: rgba(124, 58, 237, 0.08);
+      border: 1px solid var(--v-border-soft);
+      border-radius: var(--r-lg);
+      margin-bottom: 28px;
+    }
+
+    .simplify-info h4 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px
+    }
+
+    .simplify-info p {
+      font-size: 13px;
+      color: var(--muted)
+    }
+
+    .btn-simplify {
+      padding: 12px 26px;
+      background: linear-gradient(135deg, var(--v1), var(--v2));
+      border: none;
+      border-radius: var(--r-md);
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 18px var(--glow);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-simplify:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 26px var(--glow)
+    }
+
+    .btn-simplify:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none
+    }
+
+    .simplified-card {
+      background: linear-gradient(135deg, rgba(18, 13, 38, 0.9), rgba(28, 21, 60, 0.7));
+      border: 1px solid var(--v-border-soft);
+      border-left: 4px solid var(--v2);
+      border-radius: 0 var(--r-lg) var(--r-lg) 0;
+      padding: 24px 28px;
+      margin-bottom: 18px;
+      animation: fadeUp 0.3s ease;
+    }
+
+    .simplified-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--v3);
+      margin-bottom: 12px
+    }
+
+    .simplified-body {
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.8
+    }
+
+    .simplified-body p {
+      margin-bottom: 10px
+    }
+
+    .simplified-body strong {
+      color: var(--v4)
+    }
+
+    .simplified-body ul {
+      margin-left: 20px;
+      margin-bottom: 12px
+    }
+
+    .simplified-body li {
+      margin-bottom: 4px
+    }
+
+    /* CLAUSES EXPLORER */
+    .explorer-page {
+      background: rgba(10, 7, 22, 0.8);
+      border: 1px solid var(--v-border-soft);
+      border-radius: var(--r-lg);
+      padding: 22px 26px;
+      margin-bottom: 16px;
+    }
+
+    .explorer-page-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--v-border-soft);
+    }
+
+    .explorer-page-num {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--v3);
+      letter-spacing: 1px;
+      text-transform: uppercase
+    }
+
+    .explorer-text {
+      font-family: monospace;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.7;
+      white-space: pre-wrap;
+      background: rgba(18, 13, 38, 0.5);
+      padding: 14px;
+      border-radius: var(--r-sm);
+    }
+
+    /* RISK & RED FLAGS STYLES */
+    .risk-dashboard {
+      background: linear-gradient(135deg, rgba(18, 13, 38, 0.95), rgba(28, 20, 62, 0.85));
+      border: 1px solid var(--v-border);
+      border-radius: var(--r-xl);
+      padding: 28px 32px;
+      margin-bottom: 28px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 28px;
+      align-items: center;
+    }
+
+    @media(max-width:768px) {
+      .risk-dashboard {
+        grid-template-columns: 1fr;
+        text-align: center
+      }
+    }
+
+    .risk-gauge-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      border: 6px solid rgba(168, 85, 247, 0.25);
+      box-shadow: 0 0 25px rgba(124, 58, 237, 0.15) inset;
+      background: rgba(12, 8, 26, 0.9);
+      margin: 0 auto;
+      transition: all 0.4s ease;
+    }
+
+    .risk-gauge-box.low {
+      border-color: var(--emerald);
+      box-shadow: 0 0 24px rgba(16, 185, 129, 0.35), 0 0 15px rgba(16, 185, 129, 0.2) inset
+    }
+
+    .risk-gauge-box.moderate {
+      border-color: var(--amber);
+      box-shadow: 0 0 24px rgba(245, 158, 11, 0.35), 0 0 15px rgba(245, 158, 11, 0.2) inset
+    }
+
+    .risk-gauge-box.high {
+      border-color: var(--rose);
+      box-shadow: 0 0 24px rgba(244, 63, 94, 0.4), 0 0 15px rgba(244, 63, 94, 0.2) inset
+    }
+
+    .risk-score-val {
+      font-size: 38px;
+      font-weight: 800;
+      font-family: 'Playfair Display', serif;
+      line-height: 1
+    }
+
+    .risk-score-max {
+      font-size: 11px;
+      color: var(--subtle);
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin-top: 2px
+    }
+
+    .risk-info-box {
+      display: flex;
+      flex-direction: column;
+      gap: 12px
+    }
+
+    .risk-badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      width: fit-content;
+      letter-spacing: 0.5px;
+    }
+
+    .risk-badge-low {
+      background: var(--emerald-bg);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: var(--emerald)
+    }
+
+    .risk-badge-med {
+      background: var(--amber-bg);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      color: var(--amber)
+    }
+
+    .risk-badge-high {
+      background: var(--rose-bg);
+      border: 1px solid rgba(244, 63, 94, 0.4);
+      color: var(--rose);
+      animation: pulseGlow 2s infinite
+    }
+
+    @keyframes pulseGlow {
+
+      0%,
+      100% {
+        box-shadow: 0 0 8px rgba(244, 63, 94, 0.2)
+      }
+
+      50% {
+        box-shadow: 0 0 20px rgba(244, 63, 94, 0.5)
+      }
+    }
+
+    .risk-summary-text {
+      font-size: 14.5px;
+      color: var(--text);
+      line-height: 1.65
+    }
+
+    .risk-mini-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 4px
+    }
+
+    .risk-mini-stat {
+      padding: 6px 14px;
+      background: rgba(124, 58, 237, 0.08);
+      border: 1px solid var(--v-border-soft);
+      border-radius: var(--r-md);
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+    }
+
+    .risk-mini-stat strong {
+      color: #fff
+    }
+
+    .risk-filters-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 22px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--v-border-soft);
+    }
+
+    .risk-filter-chips {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap
+    }
+
+    .risk-filter-chip {
+      background: rgba(124, 58, 237, 0.08);
+      border: 1px solid var(--v-border-soft);
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .risk-filter-chip:hover {
+      color: #fff;
+      background: rgba(124, 58, 237, 0.18)
+    }
+
+    .risk-filter-chip.active {
+      background: linear-gradient(135deg, var(--v1), var(--v2));
+      color: #fff;
+      box-shadow: 0 2px 10px var(--glow)
+    }
+
+    .risk-card {
+      background: linear-gradient(135deg, rgba(18, 13, 38, 0.92), rgba(25, 18, 52, 0.75));
+      border: 1px solid var(--v-border-soft);
+      border-radius: var(--r-lg);
+      padding: 22px 26px;
+      margin-bottom: 16px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+      transition: all 0.25s ease;
+      animation: fadeUp 0.3s ease;
+    }
+
+    .risk-card:hover {
+      border-color: var(--v-border);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(124, 58, 237, 0.15)
+    }
+
+    .risk-card.sev-high {
+      border-left: 4px solid var(--rose)
+    }
+
+    .risk-card.sev-medium {
+      border-left: 4px solid var(--amber)
+    }
+
+    .risk-card.sev-low {
+      border-left: 4px solid var(--emerald)
+    }
+
+    .risk-card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px
+    }
+
+    .risk-card-title {
+      font-size: 15.5px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .risk-clause-quote {
+      background: rgba(10, 7, 22, 0.7);
+      border: 1px solid var(--v-border-soft);
+      border-radius: var(--r-md);
+      padding: 12px 16px;
+      font-family: monospace;
+      font-size: 12.5px;
+      color: var(--v4);
+      line-height: 1.65;
+      margin-bottom: 14px;
+      white-space: pre-wrap;
+    }
+
+    .risk-explanation-box {
+      font-size: 13.5px;
+      color: var(--text);
+      line-height: 1.7;
+      margin-bottom: 14px;
+    }
+
+    .risk-counter-box {
+      background: rgba(16, 185, 129, 0.06);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: var(--r-md);
+      padding: 12px 16px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .risk-counter-text {
+      font-size: 13px;
+      color: #A7F3D0;
+      line-height: 1.6
+    }
+
+    .btn-copy-counter {
+      padding: 6px 12px;
+      background: rgba(16, 185, 129, 0.18);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      border-radius: 6px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #A7F3D0;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .btn-copy-counter:hover {
+      background: rgba(16, 185, 129, 0.35);
+      color: #fff
+    }
+
+    .toast-msg {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: linear-gradient(135deg, var(--v1), var(--v2));
+      color: #fff;
+      padding: 12px 22px;
+      border-radius: var(--r-md);
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+    }
+
+    .toast-msg.show {
+      opacity: 1;
+      transform: translateY(0)
+    }
+
+    /* ALERTS & TOAST */
+    .alert {
+      border-radius: var(--r-md);
+      padding: 12px 18px;
+      font-size: 13.5px;
+      margin-top: 12px;
+      display: none;
+      animation: fadeUp 0.25s ease;
+    }
+
+    .alert.show {
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    .alert-warn {
+      background: var(--amber-bg);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      color: var(--amber)
+    }
+
+    .alert-err {
+      background: var(--rose-bg);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+      color: var(--rose)
+    }
+
+    /* FOOTER */
+    .footer {
+      text-align: center;
+      padding: 50px 0 20px;
+      color: var(--subtle);
+      font-size: 12.5px;
+      line-height: 1.8;
+    }
+
+    .footer-brand {
+      font-weight: 700;
+      color: var(--v3)
+    }
+
+    /* ANIMATION */
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(12px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    /* RESPONSIVE */
+    @media(max-width:768px) {
+      .navbar {
+        padding: 14px 18px
+      }
+
+      .nav-sub {
+        display: none
+      }
+
+      .hero {
+        padding: 42px 0 28px
+      }
+
+      .hero-title {
+        letter-spacing: -1px
+      }
+
+      .upload-card {
+        padding: 22px 16px
+      }
+
+      .drop-area {
+        padding: 26px 14px
+      }
+
+      .tab-pane {
+        padding: 22px 18px
+      }
+
+      .tab-btn {
+        font-size: 13px;
+        padding: 10px 8px
+      }
+
+      .ask-box {
+        flex-direction: column
+      }
+
+      .btn-ask {
+        width: 100%;
+        justify-content: center
+      }
+
+      .answer-card {
+        padding: 20px 18px
+      }
+
+      .answer-main-text {
+        font-size: 18px
+      }
+
+      .lang-btn {
+        padding: 4px 8px;
+        font-size: 11px
+      }
+
+      .status-pill {
+        display: none
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<!-- NAVBAR -->
-<nav class="navbar">
-  <div class="nav-brand">
-    <div class="nav-logo">⚖️</div>
-    <div class="nav-title-group">
-      <div class="nav-title">LexiGuide</div>
-      <div class="nav-sub" data-i18n="navSub">AI Legal Document Assistant</div>
-    </div>
-  </div>
-  <div class="nav-right">
-    <div class="lang-selector" id="langSelector" title="Switch Language / भाषा बदलें / भाषा बदला">
-      <button class="lang-btn active" data-lang="en">EN</button>
-      <button class="lang-btn" data-lang="hi">हिंदी</button>
-      <button class="lang-btn" data-lang="mr">मराठी</button>
-    </div>
-    <div class="status-pill">
-      <span class="status-dot"></span>
-      <span id="navStatus" data-i18n="navStatus">Gemini 3.8/3.5 Active</span>
-    </div>
-  </div>
-</nav>
-
-<div class="container">
-
-  <!-- HERO -->
-  <div class="hero">
-    <div class="hero-badge" data-i18n="heroBadge">⚡ NLP Legal Intelligence Engine</div>
-    <h1 class="hero-title" id="heroTitle">Understand Legal Documents<br><span class="gradient-text">Instantly with AI</span></h1>
-    <p class="hero-sub" data-i18n="heroSub">Upload agreements, rent receipts, contracts, or NDAs. Ask questions in English, Hindi, or Marathi, receive grounded answers with exact source citations, and simplify complex legalese.</p>
-
-    <!-- STAT PILLS -->
-    <div class="pills">
-      <div class="pill"><span class="dot"></span><span data-i18n="pill1">Strict Fact Grounding</span></div>
-      <div class="pill"><span class="dot"></span><span data-i18n="pill2">FAISS Semantic Search</span></div>
-      <div class="pill"><span class="dot"></span><span data-i18n="pill3">Page-Level Citations</span></div>
-      <div class="pill"><span class="dot"></span><span data-i18n="pill4">Plain-Language Translation</span></div>
-    </div>
-  </div>
-
-  <!-- UPLOAD ZONE -->
-  <div class="upload-card" id="uploadCard">
-    <div class="drop-area" id="dropArea">
-      <div class="drop-icon">📄</div>
-      <div class="drop-title" data-i18n="dropTitle">Drop your legal document (PDF) here</div>
-      <div class="drop-sub" data-i18n="dropSub">Supports rental agreements, receipts, contracts, NDAs, notices (up to 50MB)</div>
-      <button class="btn-browse" type="button" id="browseBtn" data-i18n="browseBtn">📂 Browse File</button>
-      <input type="file" id="fileInput" class="file-input" accept=".pdf">
-    </div>
-
-    <!-- PRELOADED SAMPLES BAR -->
-    <div class="samples-bar">
-      <span class="samples-label" data-i18n="samplesLabel">Quick test with sample:</span>
-      <button class="sample-btn" type="button" data-sample="rent-receipt_1.pdf" data-i18n="sample1">📋 Rent Receipt 1</button>
-      <button class="sample-btn" type="button" data-sample="rent_receipt_2test.pdf" data-i18n="sample2">📋 Rent Receipt 2</button>
-    </div>
-  </div>
-
-  <!-- PROCESSING BAR -->
-  <div class="processing-bar" id="processingBar">
-    <div class="spinner"></div>
-    <span id="processingText">Processing PDF and building FAISS semantic index...</span>
-  </div>
-
-  <!-- DOCUMENT INTELLIGENCE CARD -->
-  <div class="doc-card" id="docCard">
-    <div class="doc-card-head">
-      <div class="doc-card-title-group">
-        <span class="doc-type-badge" id="docTypeBadge">Legal Document</span>
-        <span class="doc-filename" id="docFilename">document.pdf</span>
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <div class="nav-logo">⚖️</div>
+      <div class="nav-title-group">
+        <div class="nav-title">LexiGuide</div>
+        <div class="nav-sub" data-i18n="navSub">AI Legal Document Assistant</div>
       </div>
-      <button class="btn-reset" id="resetBtn" data-i18n="uploadAnother">🔄 Upload Another</button>
+    </div>
+    <div class="nav-right">
+      <div class="lang-selector" id="langSelector" title="Switch Language / भाषा बदलें / भाषा बदला">
+        <button class="lang-btn active" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="hi">हिंदी</button>
+        <button class="lang-btn" data-lang="mr">मराठी</button>
+      </div>
+      <div class="status-pill">
+        <span class="status-dot"></span>
+        <span id="navStatus" data-i18n="navStatus">Gemini 3.8/3.5 Active</span>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-badge" data-i18n="heroBadge">⚡ NLP Legal Intelligence Engine</div>
+      <h1 class="hero-title" id="heroTitle">Understand Legal Documents<br><span class="gradient-text">Instantly with
+          AI</span></h1>
+      <p class="hero-sub" data-i18n="heroSub">Upload agreements, rent receipts, contracts, or NDAs. Ask questions in
+        English, Hindi, or Marathi, receive grounded answers with exact source citations, and simplify complex legalese.
+      </p>
+
+      <!-- STAT PILLS -->
+      <div class="pills">
+        <div class="pill"><span class="dot"></span><span data-i18n="pill1">Strict Fact Grounding</span></div>
+        <div class="pill"><span class="dot"></span><span data-i18n="pill2">FAISS Semantic Search</span></div>
+        <div class="pill"><span class="dot"></span><span data-i18n="pill3">Page-Level Citations</span></div>
+        <div class="pill"><span class="dot"></span><span data-i18n="pill4">Plain-Language Translation</span></div>
+      </div>
     </div>
 
-    <div class="doc-stats-grid">
-      <div class="doc-stat">
-        <span class="doc-stat-icon">📄</span>
-        <div>
-          <div class="doc-stat-val" id="statPages">0</div>
-          <div class="doc-stat-label" data-i18n="statPages">Pages Extracted</div>
+    <!-- UPLOAD ZONE -->
+    <div class="upload-card" id="uploadCard">
+      <div class="drop-area" id="dropArea">
+        <div class="drop-icon">📄</div>
+        <div class="drop-title" data-i18n="dropTitle">Drop your legal document (PDF) here</div>
+        <div class="drop-sub" data-i18n="dropSub">Supports rental agreements, receipts, contracts, NDAs, notices (up to
+          50MB)</div>
+        <button class="btn-browse" type="button" id="browseBtn" data-i18n="browseBtn">📂 Browse File</button>
+        <input type="file" id="fileInput" class="file-input" accept=".pdf">
+      </div>
+
+      <!-- PRELOADED SAMPLES BAR -->
+      <div class="samples-bar">
+        <span class="samples-label" data-i18n="samplesLabel">Quick test with sample:</span>
+        <button class="sample-btn" type="button" data-sample="rent-receipt_1.pdf" data-i18n="sample1">📋 Rent Receipt
+          1</button>
+        <button class="sample-btn" type="button" data-sample="rent_receipt_2test.pdf" data-i18n="sample2">📋 Rent
+          Receipt 2</button>
+      </div>
+    </div>
+
+    <!-- PROCESSING BAR -->
+    <div class="processing-bar" id="processingBar">
+      <div class="spinner"></div>
+      <span id="processingText">Processing PDF and building FAISS semantic index...</span>
+    </div>
+
+    <!-- DOCUMENT INTELLIGENCE CARD -->
+    <div class="doc-card" id="docCard">
+      <div class="doc-card-head">
+        <div class="doc-card-title-group">
+          <span class="doc-type-badge" id="docTypeBadge">Legal Document</span>
+          <span class="doc-filename" id="docFilename">document.pdf</span>
         </div>
-      </div>
-      <div class="doc-stat">
-        <span class="doc-stat-icon">🧩</span>
-        <div>
-          <div class="doc-stat-val" id="statChunks">0</div>
-          <div class="doc-stat-label" data-i18n="statChunks">Indexed Chunks</div>
-        </div>
-      </div>
-      <div class="doc-stat">
-        <span class="doc-stat-icon">⚡</span>
-        <div>
-          <div class="doc-stat-val">FAISS IP</div>
-          <div class="doc-stat-label" data-i18n="statIndex">Embedding Index</div>
-        </div>
-      </div>
-      <div class="doc-stat">
-        <span class="doc-stat-icon">🤖</span>
-        <div>
-          <div class="doc-stat-val">Gemini 3.8/3.5</div>
-          <div class="doc-stat-label" data-i18n="statEngine">Reasoning Engine</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="doc-summary-box" id="docSummaryBox">
-      Document successfully indexed.
-    </div>
-  </div>
-
-  <!-- MAIN ACTION TABS -->
-  <div class="tabs-wrap" id="tabsWrap">
-    <div class="tab-nav">
-      <button class="tab-btn active" data-tab="qa" id="tabQA" data-i18n="tabQA">💬 &nbsp;Smart Legal Q&amp;A</button>
-      <button class="tab-btn" data-tab="simplify" id="tabSimplify" data-i18n="tabSimplify">✨ &nbsp;Plain-Language Simplifier</button>
-      <button class="tab-btn" data-tab="clauses" id="tabClauses" data-i18n="tabClauses">📑 &nbsp;Extracted Document Clauses</button>
-    </div>
-
-    <!-- TAB 1: SMART Q&A -->
-    <div class="tab-pane active" id="pane-qa">
-      <div class="section-tag" data-i18n="qaTag">Semantic Q&amp;A Engine</div>
-      <h2 class="section-h2" data-i18n="qaTitle">Ask any question about your document</h2>
-      <p class="section-desc" data-i18n="qaDesc">LexiGuide retrieves the relevant sections via FAISS and uses Gemini to formulate a grounded answer with pinpoint page citations.</p>
-
-      <div class="chips-title" data-i18n="chipsTitle">Recommended questions for this document:</div>
-      <div class="chips-container" id="chipsContainer">
-        <!-- Dynamically populated or defaults -->
+        <button class="btn-reset" id="resetBtn" data-i18n="uploadAnother">🔄 Upload Another</button>
       </div>
 
-      <div class="ask-box">
-        <input class="input-query" id="inputQuery" type="text" placeholder="e.g. What is the monthly rent? or rent kitna hai? or bhade kiti aahe?">
-        <button class="btn-ask" id="btnAsk" data-i18n="askBtn">Ask Question →</button>
-      </div>
-
-      <div class="alert alert-warn" id="askWarn" data-i18n="askWarn">⚠️ Please enter a question first.</div>
-      <div class="alert alert-err" id="askError"></div>
-
-      <!-- ANSWER CARD -->
-      <div class="answer-container" id="answerContainer">
-        <div class="answer-card">
-          <div class="answer-header">
-            <span class="answer-q-tag" id="ansQuestionAsked">Question</span>
-            <span id="groundedBadge"></span>
+      <div class="doc-stats-grid">
+        <div class="doc-stat">
+          <span class="doc-stat-icon">📄</span>
+          <div>
+            <div class="doc-stat-val" id="statPages">0</div>
+            <div class="doc-stat-label" data-i18n="statPages">Pages Extracted</div>
           </div>
-
-          <div class="answer-main-text" id="answerMainText"></div>
-
-          <div class="meta-badges">
-            <span class="badge badge-page" id="ansPageBadge">📄 Page 1</span>
-            <span class="badge badge-conf" id="ansConfBadge">
-              <span class="conf-bar"><span class="conf-bar-fill" id="ansConfBar" style="width:95%"></span></span>
-              &nbsp;<span id="ansConfVal">95%</span> <span id="ansConfLabelText">confidence</span>
-            </span>
+        </div>
+        <div class="doc-stat">
+          <span class="doc-stat-icon">🧩</span>
+          <div>
+            <div class="doc-stat-val" id="statChunks">0</div>
+            <div class="doc-stat-label" data-i18n="statChunks">Indexed Chunks</div>
           </div>
+        </div>
+        <div class="doc-stat">
+          <span class="doc-stat-icon">⚡</span>
+          <div>
+            <div class="doc-stat-val">FAISS IP</div>
+            <div class="doc-stat-label" data-i18n="statIndex">Embedding Index</div>
+          </div>
+        </div>
+        <div class="doc-stat">
+          <span class="doc-stat-icon">🤖</span>
+          <div>
+            <div class="doc-stat-val">Gemini 2.5/Flash</div>
+            <div class="doc-stat-label" data-i18n="statEngine">Reasoning Engine</div>
+          </div>
+        </div>
+        <div class="doc-stat" id="statRiskPill" style="cursor:pointer;border-color:rgba(244,63,94,0.3)"
+          title="Click to view Legal Risk & Red Flags">
+          <span class="doc-stat-icon">🚨</span>
+          <div>
+            <div class="doc-stat-val" id="statRiskScore">--</div>
+            <div class="doc-stat-label" data-i18n="statRiskLabel">Legal Risk Score</div>
+          </div>
+        </div>
+      </div>
 
-          <!-- SOURCE CLAUSE CITATION -->
-          <div class="clause-box" id="clauseBox" style="display:none">
-            <div class="clause-header" id="clauseHeader">
-              <span data-i18n="sourceClause">📌 &nbsp;Verified Source Clause from Document</span>
-              <span id="clauseChevron">▾</span>
+      <div class="doc-summary-box" id="docSummaryBox">
+        Document successfully indexed.
+      </div>
+    </div>
+
+    <!-- MAIN ACTION TABS -->
+    <div class="tabs-wrap" id="tabsWrap">
+      <div class="tab-nav">
+        <button class="tab-btn active" data-tab="qa" id="tabQA" data-i18n="tabQA">💬 &nbsp;Smart Legal Q&amp;A</button>
+        <button class="tab-btn" data-tab="risk" id="tabRisk" data-i18n="tabRisk">🚨 &nbsp;Legal Risk &amp; Red
+          Flags</button>
+        <button class="tab-btn" data-tab="simplify" id="tabSimplify" data-i18n="tabSimplify">✨ &nbsp;Plain-Language
+          Simplifier</button>
+        <button class="tab-btn" data-tab="clauses" id="tabClauses" data-i18n="tabClauses">📑 &nbsp;Extracted Document
+          Clauses</button>
+      </div>
+
+      <!-- TAB 1: SMART Q&A -->
+      <div class="tab-pane active" id="pane-qa">
+        <div class="section-tag" data-i18n="qaTag">Semantic Q&amp;A Engine</div>
+        <h2 class="section-h2" data-i18n="qaTitle">Ask any question about your document</h2>
+        <p class="section-desc" data-i18n="qaDesc">LexiGuide retrieves the relevant sections via FAISS and uses Gemini
+          to formulate a grounded answer with pinpoint page citations.</p>
+
+        <div class="chips-title" data-i18n="chipsTitle">Recommended questions for this document:</div>
+        <div class="chips-container" id="chipsContainer">
+          <!-- Dynamically populated or defaults -->
+        </div>
+
+        <div class="ask-box">
+          <input class="input-query" id="inputQuery" type="text"
+            placeholder="e.g. What is the monthly rent? or rent kitna hai? or bhade kiti aahe?">
+          <button class="btn-ask" id="btnAsk" data-i18n="askBtn">Ask Question →</button>
+        </div>
+
+        <div class="alert alert-warn" id="askWarn" data-i18n="askWarn">⚠️ Please enter a question first.</div>
+        <div class="alert alert-err" id="askError"></div>
+
+        <!-- ANSWER CARD -->
+        <div class="answer-container" id="answerContainer">
+          <div class="answer-card">
+            <div class="answer-header">
+              <span class="answer-q-tag" id="ansQuestionAsked">Question</span>
+              <span id="groundedBadge"></span>
             </div>
-            <div class="clause-content" id="clauseContent"></div>
+
+            <div class="answer-main-text" id="answerMainText"></div>
+
+            <div class="meta-badges">
+              <span class="badge badge-page" id="ansPageBadge">📄 Page 1</span>
+              <span class="badge badge-conf" id="ansConfBadge">
+                <span class="conf-bar"><span class="conf-bar-fill" id="ansConfBar" style="width:95%"></span></span>
+                &nbsp;<span id="ansConfVal">95%</span> <span id="ansConfLabelText">confidence</span>
+              </span>
+            </div>
+
+            <!-- SOURCE CLAUSE CITATION -->
+            <div class="clause-box" id="clauseBox" style="display:none">
+              <div class="clause-header" id="clauseHeader">
+                <span data-i18n="sourceClause">📌 &nbsp;Verified Source Clause from Document</span>
+                <span id="clauseChevron">▾</span>
+              </div>
+              <div class="clause-content" id="clauseContent"></div>
+            </div>
           </div>
+        </div>
+
+        <!-- Q&A HISTORY -->
+        <div class="history-section" id="historySection">
+          <div class="history-title" data-i18n="historyTitle">Previous Questions &amp; Answers</div>
+          <div id="historyList"></div>
         </div>
       </div>
 
-      <!-- Q&A HISTORY -->
-      <div class="history-section" id="historySection">
-        <div class="history-title" data-i18n="historyTitle">Previous Questions &amp; Answers</div>
-        <div id="historyList"></div>
-      </div>
-    </div>
+      <!-- TAB 2: LEGAL RISK & RED FLAGS -->
+      <div class="tab-pane" id="pane-risk">
+        <div class="section-tag" data-i18n="riskTag">Audit &amp; Vulnerability Engine</div>
+        <h2 class="section-h2" data-i18n="riskTitle">Legal Risk &amp; Red Flag Analysis</h2>
+        <p class="section-desc" data-i18n="riskDesc">Automatically detects one-sided covenants, security deposit traps,
+          excessive penalties, arbitrary escalation, and unfair liabilities.</p>
 
-    <!-- TAB 2: PLAIN-LANGUAGE SIMPLIFIER -->
-    <div class="tab-pane" id="pane-simplify">
-      <div class="section-tag" data-i18n="simplifyTag">Plain-Language Engine</div>
-      <h2 class="section-h2" data-i18n="simplifyTitle">Demystify Complex Legal Jargon</h2>
-      <p class="section-desc" data-i18n="simplifyDesc">Transform dense clauses, archaic terms, and legal technicalities into crystal-clear plain language while strictly preserving all facts, duties, and conditions.</p>
-
-      <div class="simplify-action-box">
-        <div class="simplify-info">
-          <h4 data-i18n="simplifyBoxTitle">Full Document Simplification</h4>
-          <p data-i18n="simplifyBoxDesc">Extracts obligations, financial commitments, dates, and rights page-by-page.</p>
-          <div style="margin-top:8px;font-size:12px;color:var(--v3);display:flex;align-items:center;gap:6px">
-            <span data-i18n="outputLangLabel">🌐 Target Language:</span>
-            <strong id="simplifyTargetLangLabel">English</strong>
+        <!-- RISK DASHBOARD CARD -->
+        <div class="risk-dashboard" id="riskDashboard">
+          <div class="risk-gauge-box" id="riskGaugeBox">
+            <div class="risk-score-val" id="riskScoreVal">--</div>
+            <div class="risk-score-max">/ 100 RISK</div>
+          </div>
+          <div class="risk-info-box">
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+              <span class="risk-badge-pill risk-badge-med" id="riskLevelBadge">Ready to Analyze</span>
+              <span style="font-size:12px;color:var(--muted)">Target: <strong id="riskLangTargetLabel"
+                  style="color:var(--v3)">English</strong></span>
+            </div>
+            <div class="risk-summary-text" id="riskSummaryText">
+              Click 'Analyze Risk' to scan this document for one-sided liabilities, forfeitures, and penalties.
+            </div>
+            <div class="risk-mini-stats">
+              <div class="risk-mini-stat"><span data-i18n="statTotalFlags">Total Flags:</span> <strong
+                  id="riskStatTotal">0</strong></div>
+              <div class="risk-mini-stat"><span style="color:var(--rose)">●</span> <span
+                  data-i18n="statCritical">Critical:</span> <strong id="riskStatHigh">0</strong></div>
+              <div class="risk-mini-stat"><span style="color:var(--amber)">●</span> <span
+                  data-i18n="statWarning">Warnings:</span> <strong id="riskStatMed">0</strong></div>
+              <div class="risk-mini-stat"><span style="color:var(--emerald)">●</span> <span
+                  data-i18n="statNotice">Notices:</span> <strong id="riskStatLow">0</strong></div>
+            </div>
           </div>
         </div>
-        <button class="btn-simplify" id="btnSimplify" data-i18n="simplifyBtn">✨ &nbsp;Simplify Document</button>
+
+        <!-- FILTER & ACTION BAR -->
+        <div class="risk-filters-bar">
+          <div class="risk-filter-chips">
+            <button class="risk-filter-chip active" data-filter="all" id="filterAll" data-i18n="filterAll">All
+              Clauses</button>
+            <button class="risk-filter-chip" data-filter="high" id="filterHigh" data-i18n="filterHigh">🔴 Critical
+              Risk</button>
+            <button class="risk-filter-chip" data-filter="medium" id="filterMed" data-i18n="filterMed">🟡
+              Warnings</button>
+            <button class="risk-filter-chip" data-filter="low" id="filterLow" data-i18n="filterLow">🟢 Notices</button>
+          </div>
+          <button class="sample-btn" id="btnReanalyzeRisk" style="padding:8px 18px" data-i18n="btnReanalyze">🔄
+            Re-Analyze Document</button>
+        </div>
+
+        <!-- LOADING BAR -->
+        <div class="processing-bar" id="riskProcessingBar" style="margin-bottom:20px">
+          <div class="spinner"></div>
+          <span id="riskProcessingText" data-i18n="analyzingRiskText">Scanning clauses for legal liabilities and red
+            flags...</span>
+        </div>
+
+        <div class="alert alert-err" id="riskError" style="margin-bottom:16px"></div>
+
+        <!-- FLAGGED CLAUSES CONTAINER -->
+        <div id="riskFlagsContainer">
+          <!-- Rendered risk cards -->
+        </div>
       </div>
 
-      <div class="processing-bar" id="simplifyProcessing" style="margin-bottom:20px">
-        <div class="spinner"></div>
-        <span id="simplifyProcessingText" data-i18n="processingSimplify">Gemini is translating legal clauses into plain English...</span>
+      <!-- TAB 3: PLAIN-LANGUAGE SIMPLIFIER -->
+      <div class="tab-pane" id="pane-simplify">
+        <div class="section-tag" data-i18n="simplifyTag">Plain-Language Engine</div>
+        <h2 class="section-h2" data-i18n="simplifyTitle">Demystify Complex Legal Jargon</h2>
+        <p class="section-desc" data-i18n="simplifyDesc">Transform dense clauses, archaic terms, and legal
+          technicalities into crystal-clear plain language while strictly preserving all facts, duties, and conditions.
+        </p>
+
+        <div class="simplify-action-box">
+          <div class="simplify-info">
+            <h4 data-i18n="simplifyBoxTitle">Full Document Simplification</h4>
+            <p data-i18n="simplifyBoxDesc">Extracts obligations, financial commitments, dates, and rights page-by-page.
+            </p>
+            <div style="margin-top:8px;font-size:12px;color:var(--v3);display:flex;align-items:center;gap:6px">
+              <span data-i18n="outputLangLabel">🌐 Target Language:</span>
+              <strong id="simplifyTargetLangLabel">English</strong>
+            </div>
+          </div>
+          <button class="btn-simplify" id="btnSimplify" data-i18n="simplifyBtn">✨ &nbsp;Simplify Document</button>
+        </div>
+
+        <div class="processing-bar" id="simplifyProcessing" style="margin-bottom:20px">
+          <div class="spinner"></div>
+          <span id="simplifyProcessingText" data-i18n="processingSimplify">Gemini is translating legal clauses into
+            plain English...</span>
+        </div>
+
+        <div class="alert alert-err" id="simplifyError" style="margin-bottom:16px"></div>
+
+        <div id="simplifyResults"></div>
       </div>
 
-      <div class="alert alert-err" id="simplifyError" style="margin-bottom:16px"></div>
+      <!-- TAB 3: EXTRACTED CLAUSES EXPLORER -->
+      <div class="tab-pane" id="pane-clauses">
+        <div class="section-tag" data-i18n="explorerTag">Document Explorer</div>
+        <h2 class="section-h2" data-i18n="explorerTitle">Extracted Document Text &amp; Pages</h2>
+        <p class="section-desc" data-i18n="explorerDesc">Inspect the raw text extracted from your PDF by PyMuPDF and
+          indexed into FAISS.</p>
 
-      <div id="simplifyResults"></div>
+        <div id="clausesContainer">
+          <!-- Populated via /api/clauses -->
+        </div>
+      </div>
+
     </div>
 
-    <!-- TAB 3: EXTRACTED CLAUSES EXPLORER -->
-    <div class="tab-pane" id="pane-clauses">
-      <div class="section-tag" data-i18n="explorerTag">Document Explorer</div>
-      <h2 class="section-h2" data-i18n="explorerTitle">Extracted Document Text &amp; Pages</h2>
-      <p class="section-desc" data-i18n="explorerDesc">Inspect the raw text extracted from your PDF by PyMuPDF and indexed into FAISS.</p>
-
-      <div id="clausesContainer">
-        <!-- Populated via /api/clauses -->
-      </div>
+    <!-- FOOTER -->
+    <div class="footer">
+      <span class="footer-brand" data-i18n="footerBrand">LexiGuide</span> &nbsp;&middot;&nbsp; <span
+        data-i18n="footerDesc">AI Legal Document Assistant · NLP Mini Project (English / हिंदी / मराठी)</span><br>
+      Built with Flask, Gemini 3.8/3.5, PyMuPDF, Sentence-Transformers &amp; FAISS<br>
+      <span style="font-size:11px;color:var(--subtle)" data-i18n="footerDisclaimer">For educational demonstration
+        purposes only — not formal legal advice.</span>
     </div>
+
+    <div class="toast-msg" id="toastMsg">Proposal copied to clipboard!</div>
 
   </div>
 
-  <!-- FOOTER -->
-  <div class="footer">
-    <span class="footer-brand" data-i18n="footerBrand">LexiGuide</span> &nbsp;&middot;&nbsp; <span data-i18n="footerDesc">AI Legal Document Assistant · NLP Mini Project (English / हिंदी / मराठी)</span><br>
-    Built with Flask, Gemini 3.8/3.5, PyMuPDF, Sentence-Transformers &amp; FAISS<br>
-    <span style="font-size:11px;color:var(--subtle)" data-i18n="footerDisclaimer">For educational demonstration purposes only — not formal legal advice.</span>
-  </div>
+  <script>
+    // ── Multilingual I18N Dictionary ───────────────────────
+    const I18N = {
+      en: {
+        langName: "English",
+        navSub: "AI Legal Document Assistant",
+        navStatus: "Gemini 2.5/Flash Active",
+        heroBadge: "⚡ NLP Legal Intelligence Engine",
+        heroTitle: 'Understand Legal Documents<br><span class="gradient-text">Instantly with AI</span>',
+        heroSub: "Upload agreements, rent receipts, contracts, or NDAs. Ask questions in English, Hindi, or Marathi, receive grounded answers with exact source citations, and simplify complex legalese.",
+        pill1: "Strict Fact Grounding",
+        pill2: "FAISS Semantic Search",
+        pill3: "Page-Level Citations",
+        pill4: "Plain-Language Translation",
+        dropTitle: "Drop your legal document (PDF) here",
+        dropSub: "Supports rental agreements, receipts, contracts, NDAs, notices (up to 50MB)",
+        browseBtn: "📂 Browse File",
+        samplesLabel: "Quick test with sample:",
+        sample1: "📋 Rent Receipt 1",
+        sample2: "📋 Rent Receipt 2",
+        uploadAnother: "🔄 Upload Another",
+        statPages: "Pages Extracted",
+        statChunks: "Indexed Chunks",
+        statIndex: "Embedding Index",
+        statEngine: "Reasoning Engine",
+        tabQA: "💬 &nbsp;Smart Legal Q&amp;A",
+        tabRisk: "🚨 &nbsp;Legal Risk &amp; Red Flags",
+        tabSimplify: "✨ &nbsp;Plain-Language Simplifier",
+        tabClauses: "📑 &nbsp;Extracted Document Clauses",
+        statRiskLabel: "Legal Risk Score",
+        riskTag: "Audit &amp; Vulnerability Engine",
+        riskTitle: "Legal Risk &amp; Red Flag Analysis",
+        riskDesc: "Automatically detects one-sided covenants, security deposit traps, excessive penalties, arbitrary escalation, and unfair liabilities.",
+        statTotalFlags: "Total Flags:",
+        statCritical: "Critical:",
+        statWarning: "Warnings:",
+        statNotice: "Notices:",
+        filterAll: "All Clauses",
+        filterHigh: "🔴 Critical Risk",
+        filterMed: "🟡 Warnings",
+        filterLow: "🟢 Notices",
+        btnReanalyze: "🔄 Re-Analyze Document",
+        analyzingRiskText: "Scanning clauses for legal liabilities and red flags...",
+        whyRiskyLabel: "⚠️ Why This is Risky:",
+        counterClauseLabel: "💡 Recommended Counter-Clause / Renegotiation Proposal:",
+        copyProposalBtn: "📋 Copy Proposal",
+        copiedToast: "Proposal copied to clipboard!",
+        noRisksDetected: "✅ No critical red flags or unfair covenants were detected in this document.",
+        sourceClauseFromDoc: "📌 Exact Source Clause from PDF:",
+        qaTag: "Semantic Q&amp;A Engine",
+        qaTitle: "Ask any question about your document",
+        qaDesc: "LexiGuide retrieves the relevant sections via FAISS and uses Gemini to formulate a grounded answer with pinpoint page citations.",
+        chipsTitle: "Recommended questions for this document:",
+        askPlaceholder: "e.g. What is the monthly rent? or rent kitna hai? or bhade kiti aahe?",
+        askBtn: "Ask Question →",
+        btnAskAnalyzing: '<span class="spinner" style="width:16px;height:16px;border-width:2px"></span> Analyzing...',
+        askWarn: "⚠️ Please enter a question first.",
+        groundedBadge: "✓ Grounded in Document",
+        notGroundedBadge: "⚠️ Not In Document",
+        sourceClause: "📌 &nbsp;Verified Source Clause from Document",
+        historyTitle: "Previous Questions &amp; Answers",
+        simplifyTag: "Plain-Language Engine",
+        simplifyTitle: "Demystify Complex Legal Jargon",
+        simplifyDesc: "Transform dense clauses, archaic terms, and legal technicalities into crystal-clear plain language while strictly preserving all facts, duties, and conditions.",
+        simplifyBoxTitle: "Full Document Simplification",
+        simplifyBoxDesc: "Extracts obligations, financial commitments, dates, and rights page-by-page.",
+        outputLangLabel: "🌐 Target Language:",
+        simplifyBtn: "✨ &nbsp;Simplify Document",
+        processingSimplify: "Gemini is translating legal clauses into clear plain English...",
+        explorerTag: "Document Explorer",
+        explorerTitle: "Extracted Document Text &amp; Pages",
+        explorerDesc: "Inspect the raw text extracted from your PDF by PyMuPDF and indexed into FAISS.",
+        footerBrand: "LexiGuide",
+        footerDesc: "AI Legal Document Assistant · NLP Mini Project (English / हिंदी / मराठी)",
+        footerDisclaimer: "For educational demonstration purposes only — not formal legal advice.",
+        pageCitation: "📄 Page {page}",
+        confLabel: "confidence",
+        pageSummaryTitle: "📄 Page {page} Plain-Language Summary",
+        noSimplifyText: "No content to simplify.",
+        noClausesText: "No extracted pages found.",
+        loadingClausesText: "Loading extracted clauses...",
+        defaultSuggestions: [
+          "What is the total rent or payment amount?",
+          "Who are the landlord and tenant mentioned?",
+          "What is the date of receipt or agreement?",
+          "What are the terms, duties, or obligations?",
+          "Are there any arrears or unpaid dues?"
+        ]
+      },
+      hi: {
+        langName: "हिंदी (Hindi)",
+        navSub: "एआई कानूनी दस्तावेज़ सहायक",
+        navStatus: "जेमिनी 2.5/Flash सक्रिय",
+        heroBadge: "⚡ एनएलपी कानूनी बुद्धिमत्ता इंजन",
+        heroTitle: 'कानूनी दस्तावेज़ों को<br><span class="gradient-text">एआई से तुरंत समझें</span>',
+        heroSub: "किरायानामा, रसीदें, अनुबंध या एनडीए अपलोड करें। अंग्रेज़ी, हिंदी या मराठी में सवाल पूछें, सटीक संदर्भों के साथ उत्तर पाएं और जटिल कानूनी भाषा को सरल बनाएं।",
+        pill1: "सटीक तथ्य सत्यापन",
+        pill2: "FAISS सिमेंटिक सर्च",
+        pill3: "पृष्ठ-स्तरीय संदर्भ",
+        pill4: "सरल भाषा अनुवाद",
+        dropTitle: "अपना कानूनी दस्तावेज़ (PDF) यहाँ छोड़ें",
+        dropSub: "किरायानामा, रसीदें, अनुबंध, एनडीए और नोटिस समर्थित हैं (50MB तक)",
+        browseBtn: "📂 फ़ाइल चुनें",
+        samplesLabel: "सैंपल दस्तावेज़ से तुरंत टेस्ट करें:",
+        sample1: "📋 किराया रसीद 1",
+        sample2: "📋 किराया रसीद 2",
+        uploadAnother: "🔄 दूसरा दस्तावेज़ अपलोड करें",
+        statPages: "निकाले गए पृष्ठ",
+        statChunks: "इंडेक्स किए गए भाग",
+        statIndex: "एम्बेडिंग इंडेक्स",
+        statEngine: "रीज़निंग इंजन",
+        tabQA: "💬 &nbsp;स्मार्ट कानूनी सवाल-जवाब",
+        tabRisk: "🚨 &nbsp;कानूनी जोखिम और रेड फ्लैग्स",
+        tabSimplify: "✨ &nbsp;सरल भाषा में समझें",
+        tabClauses: "📑 &nbsp;दस्तावेज़ के मूल अंश",
+        statRiskLabel: "कानूनी जोखिम स्कोर",
+        riskTag: "ऑडिट एवं सुरक्षा इंजन",
+        riskTitle: "कानूनी जोखिम और नुकसानदेह शर्तों का विश्लेषण",
+        riskDesc: "एकतरफा शर्तें, सिक्योरिटी डिपॉजिट जब्ती, अत्यधिक जुर्माना, मनमाना किराया और खतरनाक जिम्मेदारियों की स्वचालित पहचान।",
+        statTotalFlags: "कुल चिह्नित शर्तें:",
+        statCritical: "अत्यधिक गंभीर:",
+        statWarning: "मध्यम जोखिम:",
+        statNotice: "सामान्य सूचनाएं:",
+        filterAll: "सभी शर्तें",
+        filterHigh: "🔴 अति गंभीर जोखिम",
+        filterMed: "🟡 मध्यम चेतावनी",
+        filterLow: "🟢 सामान्य सूचना",
+        btnReanalyze: "🔄 पुनः विश्लेषण करें",
+        analyzingRiskText: "दस्तावेज़ में कानूनी जोखिमों और शर्तों की जांच की जा रही है...",
+        whyRiskyLabel: "⚠️ यह शर्त आपके लिए क्यों जोखिम भरी है:",
+        counterClauseLabel: "💡 अनुशंसित बचाव शर्त / बातचीत का प्रस्ताव:",
+        copyProposalBtn: "📋 प्रस्ताव कॉपी करें",
+        copiedToast: "बचाव शर्त क्लिपबोर्ड पर कॉपी हो गई!",
+        noRisksDetected: "✅ इस दस्तावेज़ में कोई गंभीर जोखिम या अनुचित शर्तें नहीं पाई गईं।",
+        sourceClauseFromDoc: "📌 दस्तावेज़ से मूल कानूनी शर्त:",
+        qaTag: "सिमेंटिक सवाल-जवाब इंजन",
+        qaTitle: "अपने दस्तावेज़ के बारे में कोई भी प्रश्न पूछें",
+        qaDesc: "LexiGuide FAISS के जरिए सटीक अंश खोजता है और Gemini की मदद से पेज नंबर के साथ स्पष्ट हिंदी में उत्तर तैयार करता है।",
+        chipsTitle: "इस दस्तावेज़ के लिए सुझाए गए प्रश्न:",
+        askPlaceholder: "उदा. किराया कितना है? या landlord kaun hai? या नियम व शर्तें क्या हैं?",
+        askBtn: "सवाल पूछें →",
+        btnAskAnalyzing: '<span class="spinner" style="width:16px;height:16px;border-width:2px"></span> विश्लेषण जारी है...',
+        askWarn: "⚠️ कृपया पहले कोई सवाल दर्ज करें।",
+        groundedBadge: "✓ दस्तावेज़ से प्रमाणित",
+        notGroundedBadge: "⚠️ दस्तावेज़ में नहीं मिला",
+        sourceClause: "📌 &nbsp;दस्तावेज़ से सत्यापित मूल अंश",
+        historyTitle: "पिछले सवाल और जवाब",
+        simplifyTag: "सरल भाषा इंजन",
+        simplifyTitle: "जटिल कानूनी भाषा को आसान बनाएं",
+        simplifyDesc: "कठिन कानूनी शब्दों और शर्तों को सरल हिंदी में समझें, बिना किसी नियम या तथ्य को बदले।",
+        simplifyBoxTitle: "संपूर्ण दस्तावेज़ सरलीकरण",
+        simplifyBoxDesc: "प्रत्येक पृष्ठ से जिम्मेदारियों, वित्तीय भुगतान, तारीखों और अधिकारों को सरल भाषा में समझें।",
+        outputLangLabel: "🌐 आउटपुट भाषा:",
+        simplifyBtn: "✨ &nbsp;दस्तावेज़ सरल करें (हिंदी में)",
+        processingSimplify: "जेमिनी कानूनी धाराओं को सरल हिंदी में अनुवादित कर रहा है...",
+        explorerTag: "दस्तावेज़ अन्वेषक",
+        explorerTitle: "निकाला गया मूल कानूनी पाठ",
+        explorerDesc: "PyMuPDF द्वारा निकाली गई और FAISS में इंडेक्स की गई मूल सामग्री देखें।",
+        footerBrand: "LexiGuide",
+        footerDesc: "एआई कानूनी दस्तावेज़ सहायक · NLP Mini Project (English / हिंदी / मराठी)",
+        footerDisclaimer: "केवल शैक्षणिक उद्देश्य के लिए — यह औपचारिक कानूनी सलाह नहीं है।",
+        pageCitation: "📄 पृष्ठ {page}",
+        confLabel: "सटीकता",
+        pageSummaryTitle: "📄 पृष्ठ {page} का सरल भाषा सारांश",
+        noSimplifyText: "सरल करने के लिए कोई सामग्री नहीं है।",
+        noClausesText: "कोई निकाले गए पृष्ठ नहीं मिले।",
+        loadingClausesText: "दस्तावेज़ के अंश लोड हो रहे हैं...",
+        defaultSuggestions: [
+          "किराया या कुल भुगतान राशि कितनी है?",
+          "मकान मालिक और किरायेदार का नाम क्या है?",
+          "रसीद या समझौते की तारीख क्या है?",
+          "मुख्य नियम, शर्तें और जिम्मेदारियां क्या हैं?",
+          "क्या कोई बकाया राशि या पिछला किराया बाकी है?"
+        ]
+      },
+      mr: {
+        langName: "मराठी (Marathi)",
+        navSub: "एआई कायदेशीर दस्तऐवज सहाय्यक",
+        navStatus: "जेमिनी 2.5/Flash सक्रिय",
+        heroBadge: "⚡ एनएलपी कायदेशीर बुद्धिमत्ता इंजिन",
+        heroTitle: 'कायदेशीर दस्तऐवज<br><span class="gradient-text">एआई द्वारे त्वरित समजून घ्या</span>',
+        heroSub: "भाडे पावती, करार किंवा कायदेशीर कागदपत्रे अपलोड करा. इंग्रजी, हिंदी किंवा मराठीत प्रश्न विचारा, अचूक संदर्भांसह उत्तरे मिळवा आणि जटिल कायदेशीर मजकूर सोप्या मराठीत समजून घ्या.",
+        pill1: "अचूक सत्य पडताळणी",
+        pill2: "FAISS सिमेंटिक शोध",
+        pill3: "पान-स्तरीय संदर्भ",
+        pill4: "सोप्या भाषेत अनुवाद",
+        dropTitle: "तुमचा कायदेशीर दस्तऐवज (PDF) येथे टाका",
+        dropSub: "भाडे करार, पावत्या, करार आणि नोटिसा समर्थित (50MB पर्यंत)",
+        browseBtn: "📂 फाइल निवडा",
+        samplesLabel: "नमुना दस्तऐवजासह त्वरित चाचणी करा:",
+        sample1: "📋 भाडे पावती 1",
+        sample2: "📋 भाडे पावती 2",
+        uploadAnother: "🔄 दुसरा दस्तऐवज अपलोड करा",
+        statPages: "काढलेली पाने",
+        statChunks: "इंडेक्स केलेले भाग",
+        statIndex: "एम्बेडिंग इंडेक्स",
+        statEngine: "रीझनिंग इंजिन",
+        tabQA: "💬 &nbsp;स्मार्ट कायदेशीर प्रश्नोत्तरे",
+        tabRisk: "🚨 &nbsp;कायदेशीर जोखीम आणि रेड फ्लॅग्ज",
+        tabSimplify: "✨ &nbsp;सोप्या भाषेत समजावून घ्या",
+        tabClauses: "📑 &nbsp;दस्तऐवजातील मूळ मजकूर",
+        statRiskLabel: "कायदेशीर जोखीम स्कोअर",
+        riskTag: "ऑडिट आणि जोखीम इंजिन",
+        riskTitle: "कायदेशीर जोखीम आणि अटींचे विश्लेषण",
+        riskDesc: "एकतर्फी अटी, ठेव जप्तीचा धोका, अतिउंच दंड, मनमानी भाडेवाढ आणि अन्यायकारक दायित्वांचा त्वरित शोध.",
+        statTotalFlags: "एकूण शोधलेल्या अटी:",
+        statCritical: "अति धोकादायक:",
+        statWarning: "मध्यम जोखीम:",
+        statNotice: "सामान्य सूचना:",
+        filterAll: "सर्व अटी",
+        filterHigh: "🔴 अति धोकादायक",
+        filterMed: "🟡 मध्यम चेतावणी",
+        filterLow: "🟢 सामान्य सूचना",
+        btnReanalyze: "🔄 पुन्हा विश्लेषण करा",
+        analyzingRiskText: "दस्तऐवजातील जोखीम आणि धोक्यांची तपासणी सुरू आहे...",
+        whyRiskyLabel: "⚠️ ही अट तुमच्यासाठी का धोकादायक आहे:",
+        counterClauseLabel: "💡 शिफारस केलेली बचाव अट / बोलणी प्रस्ताव:",
+        copyProposalBtn: "📋 प्रस्ताव कॉपी करा",
+        copiedToast: "बचाव अट क्लिपबोर्डवर कॉपी झाली!",
+        noRisksDetected: "✅ या दस्तऐवजात कोणत्याही गंभीर किंवा अन्यायकारक अटी आढळल्या नाहीत.",
+        sourceClauseFromDoc: "📌 दस्तऐवजातील मूळ कायदेशीर अट:",
+        qaTag: "सिमेंटिक प्रश्नोत्तर इंजिन",
+        qaTitle: "तुमच्या दस्तऐवजाबद्दल कोणताही प्रश्न विचारा",
+        qaDesc: "LexiGuide FAISS द्वारे योग्य भाग शोधते आणि Gemini च्या साहाय्याने पानांच्या संदर्भासह अचूक मराठीत उत्तर देते.",
+        chipsTitle: "या दस्तऐवजासाठी सुचवलेले प्रश्न:",
+        askPlaceholder: "उदा. भाडे किती आहे? किंवा घरमालक कोण आहे? किंवा कराराच्या अटी काय आहेत?",
+        askBtn: "प्रश्न विचारा →",
+        btnAskAnalyzing: '<span class="spinner" style="width:16px;height:16px;border-width:2px"></span> विश्लेषण चालू आहे...',
+        askWarn: "⚠️ कृपया आधी एक प्रश्न प्रविष्ट करा.",
+        groundedBadge: "✓ दस्तऐवजातून प्रमाणित",
+        notGroundedBadge: "⚠️ दस्तऐवजात सापडले नाही",
+        sourceClause: "📌 &nbsp;दस्तऐवजातील पडताळलेला मूळ परिच्छेद",
+        historyTitle: "मागील प्रश्न आणि उत्तरे",
+        simplifyTag: "सोपी भाषा इंजिन",
+        simplifyTitle: "जटिल कायदेशीर भाषा सोपी करा",
+        simplifyDesc: "कठीण कायदेशीर अटी आणि नियम सोप्या मराठीत समजून घ्या, सर्व सत्य आणि कर्तव्ये अबाधित ठेवून.",
+        simplifyBoxTitle: "संपूर्ण दस्तऐवज सोपे करणे",
+        simplifyBoxDesc: "प्रत्येक पानावरील जबाबदाऱ्या, आर्थिक बाबी, तारखा आणि अधिकार सोप्या भाषेत मिळवा.",
+        outputLangLabel: "🌐 आउटपुट भाषा:",
+        simplifyBtn: "✨ &nbsp;दस्तऐवज सोपे करा (मराठीत)",
+        processingSimplify: "जेमिनी कायदेशीर कलमे सोप्या मराठीत रूपांतरित करत आहे...",
+        explorerTag: "दस्तऐवज अन्वेषक",
+        explorerTitle: "काढलेला मूळ कायदेशीर मजकूर",
+        explorerDesc: "PyMuPDF द्वारे काढलेला आणि FAISS मध्ये इंडेक्स केलेला मूळ मजकूर तपासा.",
+        footerBrand: "LexiGuide",
+        footerDesc: "एआई कायदेशीर दस्तऐवज सहाय्यक · NLP Mini Project (English / हिंदी / मराठी)",
+        footerDisclaimer: "केवळ शैक्षणिक प्रात्यक्षिकासाठी — हा कोणताही औपचारिक कायदेशीर सल्ला नाही.",
+        pageCitation: "📄 पान {page}",
+        confLabel: "विश्वासार्हता",
+        pageSummaryTitle: "📄 पान {page} चा सोप्या भाषेतील सारांश",
+        noSimplifyText: "सोपे करण्यासाठी कोणताही मजकूर नाही.",
+        noClausesText: "काढलेली पाने सापडली नाहीत.",
+        loadingClausesText: "दस्तऐवजातील परिच्छेद लोड होत आहेत...",
+        defaultSuggestions: [
+          "एकूण भाडे किंवा पेमेंटची रक्कम किती आहे?",
+          "घरमालक आणि भाडेकरू कोण आहेत?",
+          "पावती किंवा कराराची तारीख काय आहे?",
+          "मुख्य नियम, अटी आणि जबाबदाऱ्या कोणत्या आहेत?",
+          "काही जुनी थकबाकी किंवा दंड बाकी आहे का?"
+        ]
+      }
+    };
 
-</div>
+    // ── Application State ─────────────────────────────────
+    let activeDoc = null;
+    const qaHistory = [];
+    let currentLang = localStorage.getItem('lexiguide_lang') || 'en';
+    if (!I18N[currentLang]) currentLang = 'en';
 
-<script>
-// ── Multilingual I18N Dictionary ───────────────────────
-const I18N = {
-  en: {
-    langName: "English",
-    navSub: "AI Legal Document Assistant",
-    navStatus: "Gemini 3.8/3.5 Active",
-    heroBadge: "⚡ NLP Legal Intelligence Engine",
-    heroTitle: 'Understand Legal Documents<br><span class="gradient-text">Instantly with AI</span>',
-    heroSub: "Upload agreements, rent receipts, contracts, or NDAs. Ask questions in English, Hindi, or Marathi, receive grounded answers with exact source citations, and simplify complex legalese.",
-    pill1: "Strict Fact Grounding",
-    pill2: "FAISS Semantic Search",
-    pill3: "Page-Level Citations",
-    pill4: "Plain-Language Translation",
-    dropTitle: "Drop your legal document (PDF) here",
-    dropSub: "Supports rental agreements, receipts, contracts, NDAs, notices (up to 50MB)",
-    browseBtn: "📂 Browse File",
-    samplesLabel: "Quick test with sample:",
-    sample1: "📋 Rent Receipt 1",
-    sample2: "📋 Rent Receipt 2",
-    uploadAnother: "🔄 Upload Another",
-    statPages: "Pages Extracted",
-    statChunks: "Indexed Chunks",
-    statIndex: "Embedding Index",
-    statEngine: "Reasoning Engine",
-    tabQA: "💬 &nbsp;Smart Legal Q&amp;A",
-    tabSimplify: "✨ &nbsp;Plain-Language Simplifier",
-    tabClauses: "📑 &nbsp;Extracted Document Clauses",
-    qaTag: "Semantic Q&amp;A Engine",
-    qaTitle: "Ask any question about your document",
-    qaDesc: "LexiGuide retrieves the relevant sections via FAISS and uses Gemini to formulate a grounded answer with pinpoint page citations.",
-    chipsTitle: "Recommended questions for this document:",
-    askPlaceholder: "e.g. What is the monthly rent? or rent kitna hai? or bhade kiti aahe?",
-    askBtn: "Ask Question →",
-    btnAskAnalyzing: '<span class="spinner" style="width:16px;height:16px;border-width:2px"></span> Analyzing...',
-    askWarn: "⚠️ Please enter a question first.",
-    groundedBadge: "✓ Grounded in Document",
-    notGroundedBadge: "⚠️ Not In Document",
-    sourceClause: "📌 &nbsp;Verified Source Clause from Document",
-    historyTitle: "Previous Questions &amp; Answers",
-    simplifyTag: "Plain-Language Engine",
-    simplifyTitle: "Demystify Complex Legal Jargon",
-    simplifyDesc: "Transform dense clauses, archaic terms, and legal technicalities into crystal-clear plain language while strictly preserving all facts, duties, and conditions.",
-    simplifyBoxTitle: "Full Document Simplification",
-    simplifyBoxDesc: "Extracts obligations, financial commitments, dates, and rights page-by-page.",
-    outputLangLabel: "🌐 Target Language:",
-    simplifyBtn: "✨ &nbsp;Simplify Document",
-    processingSimplify: "Gemini is translating legal clauses into clear plain English...",
-    explorerTag: "Document Explorer",
-    explorerTitle: "Extracted Document Text &amp; Pages",
-    explorerDesc: "Inspect the raw text extracted from your PDF by PyMuPDF and indexed into FAISS.",
-    footerBrand: "LexiGuide",
-    footerDesc: "AI Legal Document Assistant · NLP Mini Project (English / हिंदी / मराठी)",
-    footerDisclaimer: "For educational demonstration purposes only — not formal legal advice.",
-    pageCitation: "📄 Page {page}",
-    confLabel: "confidence",
-    pageSummaryTitle: "📄 Page {page} Plain-Language Summary",
-    noSimplifyText: "No content to simplify.",
-    noClausesText: "No extracted pages found.",
-    loadingClausesText: "Loading extracted clauses...",
-    defaultSuggestions: [
-      "What is the total rent or payment amount?",
-      "Who are the landlord and tenant mentioned?",
-      "What is the date of receipt or agreement?",
-      "What are the terms, duties, or obligations?",
-      "Are there any arrears or unpaid dues?"
-    ]
-  },
-  hi: {
-    langName: "हिंदी (Hindi)",
-    navSub: "एआई कानूनी दस्तावेज़ सहायक",
-    navStatus: "जेमिनी 3.8/3.5 सक्रिय",
-    heroBadge: "⚡ एनएलपी कानूनी बुद्धिमत्ता इंजन",
-    heroTitle: 'कानूनी दस्तावेज़ों को<br><span class="gradient-text">एआई से तुरंत समझें</span>',
-    heroSub: "किरायानामा, रसीदें, अनुबंध या एनडीए अपलोड करें। अंग्रेज़ी, हिंदी या मराठी में सवाल पूछें, सटीक संदर्भों के साथ उत्तर पाएं और जटिल कानूनी भाषा को सरल बनाएं।",
-    pill1: "सटीक तथ्य सत्यापन",
-    pill2: "FAISS सिमेंटिक सर्च",
-    pill3: "पृष्ठ-स्तरीय संदर्भ",
-    pill4: "सरल भाषा अनुवाद",
-    dropTitle: "अपना कानूनी दस्तावेज़ (PDF) यहाँ छोड़ें",
-    dropSub: "किरायानामा, रसीदें, अनुबंध, एनडीए और नोटिस समर्थित हैं (50MB तक)",
-    browseBtn: "📂 फ़ाइल चुनें",
-    samplesLabel: "सैंपल दस्तावेज़ से तुरंत टेस्ट करें:",
-    sample1: "📋 किराया रसीद 1",
-    sample2: "📋 किराया रसीद 2",
-    uploadAnother: "🔄 दूसरा दस्तावेज़ अपलोड करें",
-    statPages: "निकाले गए पृष्ठ",
-    statChunks: "इंडेक्स किए गए भाग",
-    statIndex: "एम्बेडिंग इंडेक्स",
-    statEngine: "रीज़निंग इंजन",
-    tabQA: "💬 &nbsp;स्मार्ट कानूनी सवाल-जवाब",
-    tabSimplify: "✨ &nbsp;सरल भाषा में समझें",
-    tabClauses: "📑 &nbsp;दस्तावेज़ के मूल अंश",
-    qaTag: "सिमेंटिक सवाल-जवाब इंजन",
-    qaTitle: "अपने दस्तावेज़ के बारे में कोई भी प्रश्न पूछें",
-    qaDesc: "LexiGuide FAISS के जरिए सटीक अंश खोजता है और Gemini की मदद से पेज नंबर के साथ स्पष्ट हिंदी में उत्तर तैयार करता है।",
-    chipsTitle: "इस दस्तावेज़ के लिए सुझाए गए प्रश्न:",
-    askPlaceholder: "उदा. किराया कितना है? या landlord kaun hai? या नियम व शर्तें क्या हैं?",
-    askBtn: "सवाल पूछें →",
-    btnAskAnalyzing: '<span class="spinner" style="width:16px;height:16px;border-width:2px"></span> विश्लेषण जारी है...',
-    askWarn: "⚠️ कृपया पहले कोई सवाल दर्ज करें।",
-    groundedBadge: "✓ दस्तावेज़ से प्रमाणित",
-    notGroundedBadge: "⚠️ दस्तावेज़ में नहीं मिला",
-    sourceClause: "📌 &nbsp;दस्तावेज़ से सत्यापित मूल अंश",
-    historyTitle: "पिछले सवाल और जवाब",
-    simplifyTag: "सरल भाषा इंजन",
-    simplifyTitle: "जटिल कानूनी भाषा को आसान बनाएं",
-    simplifyDesc: "कठिन कानूनी शब्दों और शर्तों को सरल हिंदी में समझें, बिना किसी नियम या तथ्य को बदले।",
-    simplifyBoxTitle: "संपूर्ण दस्तावेज़ सरलीकरण",
-    simplifyBoxDesc: "प्रत्येक पृष्ठ से जिम्मेदारियों, वित्तीय भुगतान, तारीखों और अधिकारों को सरल भाषा में समझें।",
-    outputLangLabel: "🌐 आउटपुट भाषा:",
-    simplifyBtn: "✨ &nbsp;दस्तावेज़ सरल करें (हिंदी में)",
-    processingSimplify: "जेमिनी कानूनी धाराओं को सरल हिंदी में अनुवादित कर रहा है...",
-    explorerTag: "दस्तावेज़ अन्वेषक",
-    explorerTitle: "निकाला गया मूल कानूनी पाठ",
-    explorerDesc: "PyMuPDF द्वारा निकाली गई और FAISS में इंडेक्स की गई मूल सामग्री देखें।",
-    footerBrand: "LexiGuide",
-    footerDesc: "एआई कानूनी दस्तावेज़ सहायक · NLP Mini Project (English / हिंदी / मराठी)",
-    footerDisclaimer: "केवल शैक्षणिक उद्देश्य के लिए — यह औपचारिक कानूनी सलाह नहीं है।",
-    pageCitation: "📄 पृष्ठ {page}",
-    confLabel: "सटीकता",
-    pageSummaryTitle: "📄 पृष्ठ {page} का सरल भाषा सारांश",
-    noSimplifyText: "सरल करने के लिए कोई सामग्री नहीं है।",
-    noClausesText: "कोई निकाले गए पृष्ठ नहीं मिले।",
-    loadingClausesText: "दस्तावेज़ के अंश लोड हो रहे हैं...",
-    defaultSuggestions: [
-      "किराया या कुल भुगतान राशि कितनी है?",
-      "मकान मालिक और किरायेदार का नाम क्या है?",
-      "रसीद या समझौते की तारीख क्या है?",
-      "मुख्य नियम, शर्तें और जिम्मेदारियां क्या हैं?",
-      "क्या कोई बकाया राशि या पिछला किराया बाकी है?"
-    ]
-  },
-  mr: {
-    langName: "मराठी (Marathi)",
-    navSub: "एआई कायदेशीर दस्तऐवज सहाय्यक",
-    navStatus: "जेमिनी 3.8/3.5 सक्रिय",
-    heroBadge: "⚡ एनएलपी कायदेशीर बुद्धिमत्ता इंजिन",
-    heroTitle: 'कायदेशीर दस्तऐवज<br><span class="gradient-text">एआई द्वारे त्वरित समजून घ्या</span>',
-    heroSub: "भाडे पावती, करार किंवा कायदेशीर कागदपत्रे अपलोड करा. इंग्रजी, हिंदी किंवा मराठीत प्रश्न विचारा, अचूक संदर्भांसह उत्तरे मिळवा आणि जटिल कायदेशीर मजकूर सोप्या मराठीत समजून घ्या.",
-    pill1: "अचूक सत्य पडताळणी",
-    pill2: "FAISS सिमेंटिक शोध",
-    pill3: "पान-स्तरीय संदर्भ",
-    pill4: "सोप्या भाषेत अनुवाद",
-    dropTitle: "तुमचा कायदेशीर दस्तऐवज (PDF) येथे टाका",
-    dropSub: "भाडे करार, पावत्या, करार आणि नोटिसा समर्थित (50MB पर्यंत)",
-    browseBtn: "📂 फाइल निवडा",
-    samplesLabel: "नमुना दस्तऐवजासह त्वरित चाचणी करा:",
-    sample1: "📋 भाडे पावती 1",
-    sample2: "📋 भाडे पावती 2",
-    uploadAnother: "🔄 दुसरा दस्तऐवज अपलोड करा",
-    statPages: "काढलेली पाने",
-    statChunks: "इंडेक्स केलेले भाग",
-    statIndex: "एम्बेडिंग इंडेक्स",
-    statEngine: "रीझनिंग इंजिन",
-    tabQA: "💬 &nbsp;स्मार्ट कायदेशीर प्रश्नोत्तरे",
-    tabSimplify: "✨ &nbsp;सोप्या भाषेत समजावून घ्या",
-    tabClauses: "📑 &nbsp;दस्तऐवजातील मूळ मजकूर",
-    qaTag: "सिमेंटिक प्रश्नोत्तर इंजिन",
-    qaTitle: "तुमच्या दस्तऐवजाबद्दल कोणताही प्रश्न विचारा",
-    qaDesc: "LexiGuide FAISS द्वारे योग्य भाग शोधते आणि Gemini च्या साहाय्याने पानांच्या संदर्भासह अचूक मराठीत उत्तर देते.",
-    chipsTitle: "या दस्तऐवजासाठी सुचवलेले प्रश्न:",
-    askPlaceholder: "उदा. भाडे किती आहे? किंवा घरमालक कोण आहे? किंवा कराराच्या अटी काय आहेत?",
-    askBtn: "प्रश्न विचारा →",
-    btnAskAnalyzing: '<span class="spinner" style="width:16px;height:16px;border-width:2px"></span> विश्लेषण चालू आहे...',
-    askWarn: "⚠️ कृपया आधी एक प्रश्न प्रविष्ट करा.",
-    groundedBadge: "✓ दस्तऐवजातून प्रमाणित",
-    notGroundedBadge: "⚠️ दस्तऐवजात सापडले नाही",
-    sourceClause: "📌 &nbsp;दस्तऐवजातील पडताळलेला मूळ परिच्छेद",
-    historyTitle: "मागील प्रश्न आणि उत्तरे",
-    simplifyTag: "सोपी भाषा इंजिन",
-    simplifyTitle: "जटिल कायदेशीर भाषा सोपी करा",
-    simplifyDesc: "कठीण कायदेशीर अटी आणि नियम सोप्या मराठीत समजून घ्या, सर्व सत्य आणि कर्तव्ये अबाधित ठेवून.",
-    simplifyBoxTitle: "संपूर्ण दस्तऐवज सोपे करणे",
-    simplifyBoxDesc: "प्रत्येक पानावरील जबाबदाऱ्या, आर्थिक बाबी, तारखा आणि अधिकार सोप्या भाषेत मिळवा.",
-    outputLangLabel: "🌐 आउटपुट भाषा:",
-    simplifyBtn: "✨ &nbsp;दस्तऐवज सोपे करा (मराठीत)",
-    processingSimplify: "जेमिनी कायदेशीर कलमे सोप्या मराठीत रूपांतरित करत आहे...",
-    explorerTag: "दस्तऐवज अन्वेषक",
-    explorerTitle: "काढलेला मूळ कायदेशीर मजकूर",
-    explorerDesc: "PyMuPDF द्वारे काढलेला आणि FAISS मध्ये इंडेक्स केलेला मूळ मजकूर तपासा.",
-    footerBrand: "LexiGuide",
-    footerDesc: "एआई कायदेशीर दस्तऐवज सहाय्यक · NLP Mini Project (English / हिंदी / मराठी)",
-    footerDisclaimer: "केवळ शैक्षणिक प्रात्यक्षिकासाठी — हा कोणताही औपचारिक कायदेशीर सल्ला नाही.",
-    pageCitation: "📄 पान {page}",
-    confLabel: "विश्वासार्हता",
-    pageSummaryTitle: "📄 पान {page} चा सोप्या भाषेतील सारांश",
-    noSimplifyText: "सोपे करण्यासाठी कोणताही मजकूर नाही.",
-    noClausesText: "काढलेली पाने सापडली नाहीत.",
-    loadingClausesText: "दस्तऐवजातील परिच्छेद लोड होत आहेत...",
-    defaultSuggestions: [
-      "एकूण भाडे किंवा पेमेंटची रक्कम किती आहे?",
-      "घरमालक आणि भाडेकरू कोण आहेत?",
-      "पावती किंवा कराराची तारीख काय आहे?",
-      "मुख्य नियम, अटी आणि जबाबदाऱ्या कोणत्या आहेत?",
-      "काही जुनी थकबाकी किंवा दंड बाकी आहे का?"
-    ]
-  }
-};
+    // ── DOM Elements ──────────────────────────────────────
+    const $ = id => document.getElementById(id);
+    const show = el => el.classList.add('show');
+    const hide = el => el.classList.remove('show');
 
-// ── Application State ─────────────────────────────────
-let activeDoc = null;
-const qaHistory = [];
-let currentLang = localStorage.getItem('lexiguide_lang') || 'en';
-if (!I18N[currentLang]) currentLang = 'en';
+    // ── Language Switcher Function ────────────────────────
+    function setLanguage(lang) {
+      if (!I18N[lang]) lang = 'en';
+      currentLang = lang;
+      localStorage.setItem('lexiguide_lang', lang);
+      document.documentElement.lang = lang;
 
-// ── DOM Elements ──────────────────────────────────────
-const $ = id => document.getElementById(id);
-const show = el => el.classList.add('show');
-const hide = el => el.classList.remove('show');
+      // Update active button state
+      document.querySelectorAll('#langSelector .lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
 
-// ── Language Switcher Function ────────────────────────
-function setLanguage(lang) {
-  if (!I18N[lang]) lang = 'en';
-  currentLang = lang;
-  localStorage.setItem('lexiguide_lang', lang);
-  document.documentElement.lang = lang;
+      const dict = I18N[lang];
 
-  // Update active button state
-  document.querySelectorAll('#langSelector .lang-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.lang === lang);
-  });
+      // Apply all data-i18n text
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.dataset.i18n;
+        if (dict[key]) {
+          el.innerHTML = dict[key];
+        }
+      });
 
-  const dict = I18N[lang];
+      // Apply inputs and placeholders
+      if ($('inputQuery')) $('inputQuery').placeholder = dict.askPlaceholder;
+      if ($('simplifyTargetLangLabel')) $('simplifyTargetLangLabel').textContent = dict.langName;
+      if ($('riskLangTargetLabel')) $('riskLangTargetLabel').textContent = dict.langName;
+      if ($('ansConfLabelText')) $('ansConfLabelText').textContent = dict.confLabel;
 
-  // Apply all data-i18n text
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.dataset.i18n;
-    if (dict[key]) {
-      el.innerHTML = dict[key];
+      // Refresh question recommendation chips for current language
+      if (activeDoc) {
+        renderChips();
+      }
+
+      // Refresh risk analysis UI if already loaded
+      if (currentRiskData) {
+        renderRiskAnalysis(currentRiskData);
+      }
     }
-  });
 
-  // Apply inputs and placeholders
-  if ($('inputQuery')) $('inputQuery').placeholder = dict.askPlaceholder;
-  if ($('simplifyTargetLangLabel')) $('simplifyTargetLangLabel').textContent = dict.langName;
-  if ($('ansConfLabelText')) $('ansConfLabelText').textContent = dict.confLabel;
+    // ── Initialize App ────────────────────────────────────
+    window.addEventListener('DOMContentLoaded', async () => {
+      // Bind language buttons
+      document.querySelectorAll('#langSelector .lang-btn').forEach(btn => {
+        btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
+      });
 
-  // Refresh question recommendation chips for current language
-  if (activeDoc) {
-    renderChips();
-  }
-}
+      setLanguage(currentLang);
+      checkExistingDocument();
+    });
 
-// ── Initialize App ────────────────────────────────────
-window.addEventListener('DOMContentLoaded', async () => {
-  // Bind language buttons
-  document.querySelectorAll('#langSelector .lang-btn').forEach(btn => {
-    btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
-  });
-
-  setLanguage(currentLang);
-  checkExistingDocument();
-});
-
-async function checkExistingDocument() {
-  try {
-    const res = await fetch('/api/document');
-    const data = await res.json();
-    if (data.active) {
-      applyDocumentState(data);
+    async function checkExistingDocument() {
+      try {
+        const res = await fetch('/api/document');
+        const data = await res.json();
+        if (data.active) {
+          applyDocumentState(data);
+        }
+      } catch (e) {
+        console.log("No active doc or server starting...");
+      }
     }
-  } catch (e) {
-    console.log("No active doc or server starting...");
-  }
-}
 
-// ── Tab Navigation ────────────────────────────────────
-document.querySelectorAll('.tab-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-    btn.classList.add('active');
-    $('pane-' + btn.dataset.tab).classList.add('active');
+    // ── Tab Navigation ────────────────────────────────────
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        $('pane-' + btn.dataset.tab).classList.add('active');
 
-    if (btn.dataset.tab === 'clauses') {
-      loadClauses();
+        if (btn.dataset.tab === 'clauses') {
+          loadClauses();
+        } else if (btn.dataset.tab === 'risk') {
+          if (!currentRiskData) {
+            loadRiskAnalysis();
+          }
+        }
+      });
+    });
+
+    // Click on quick risk stat card in document header to open risk tab
+    const riskPill = $('statRiskPill');
+    if (riskPill) {
+      riskPill.addEventListener('click', () => {
+        const rTab = $('tabRisk');
+        if (rTab) rTab.click();
+      });
     }
-  });
-});
 
-// ── Upload Handlers ───────────────────────────────────
-const dropArea = $('dropArea');
-const fileInput = $('fileInput');
-const browseBtn = $('browseBtn');
+    // ── Upload Handlers ───────────────────────────────────
+    const dropArea = $('dropArea');
+    const fileInput = $('fileInput');
+    const browseBtn = $('browseBtn');
 
-browseBtn.addEventListener('click', () => fileInput.click());
-fileInput.addEventListener('change', () => {
-  if (fileInput.files.length) uploadFile(fileInput.files[0]);
-});
+    browseBtn.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files.length) uploadFile(fileInput.files[0]);
+    });
 
-['dragenter','dragover'].forEach(e => {
-  dropArea.addEventListener(e, ev => { ev.preventDefault(); dropArea.classList.add('dragover'); });
-});
-['dragleave','drop'].forEach(e => {
-  dropArea.addEventListener(e, ev => { ev.preventDefault(); dropArea.classList.remove('dragover'); });
-});
-dropArea.addEventListener('drop', ev => {
-  const f = ev.dataTransfer.files[0];
-  if (f) uploadFile(f);
-});
+    ['dragenter', 'dragover'].forEach(e => {
+      dropArea.addEventListener(e, ev => { ev.preventDefault(); dropArea.classList.add('dragover'); });
+    });
+    ['dragleave', 'drop'].forEach(e => {
+      dropArea.addEventListener(e, ev => { ev.preventDefault(); dropArea.classList.remove('dragover'); });
+    });
+    dropArea.addEventListener('drop', ev => {
+      const f = ev.dataTransfer.files[0];
+      if (f) uploadFile(f);
+    });
 
-// ── Sample Buttons ────────────────────────────────────
-document.querySelectorAll('.sample-btn').forEach(btn => {
-  btn.addEventListener('click', async () => {
-    const sampleName = btn.dataset.sample;
-    showProcessing(`Loading sample document (${sampleName})...`);
-    try {
-      const res = await fetch(`/api/sample/${sampleName}`, { method: 'POST' });
-      const data = await res.json();
-      hideProcessing();
-      if (!res.ok) {
-        alert('Error loading sample: ' + (data.error || 'Failed'));
+    // ── Sample Buttons ────────────────────────────────────
+    document.querySelectorAll('.sample-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const sampleName = btn.dataset.sample;
+        showProcessing(`Loading sample document (${sampleName})...`);
+        try {
+          const res = await fetch(`/api/sample/${sampleName}`, { method: 'POST' });
+          const data = await res.json();
+          hideProcessing();
+          if (!res.ok) {
+            alert('Error loading sample: ' + (data.error || 'Failed'));
+            return;
+          }
+          applyDocumentState(data);
+        } catch (e) {
+          hideProcessing();
+          alert('Network error loading sample: ' + e.message);
+        }
+      });
+    });
+
+    // ── Upload File API ───────────────────────────────────
+    async function uploadFile(file) {
+      if (!file.name.toLowerCase().endsWith('.pdf')) {
+        alert('Please upload a valid PDF document.');
         return;
       }
-      applyDocumentState(data);
-    } catch (e) {
-      hideProcessing();
-      alert('Network error loading sample: ' + e.message);
-    }
-  });
-});
 
-// ── Upload File API ───────────────────────────────────
-async function uploadFile(file) {
-  if (!file.name.toLowerCase().endsWith('.pdf')) {
-    alert('Please upload a valid PDF document.');
-    return;
-  }
+      showProcessing(`Analyzing "${file.name}" and extracting text...`);
+      const form = new FormData();
+      form.append('file', file);
 
-  showProcessing(`Analyzing "${file.name}" and extracting text...`);
-  const form = new FormData();
-  form.append('file', file);
+      try {
+        const res = await fetch('/api/upload', { method: 'POST', body: form });
+        const data = await res.json();
+        hideProcessing();
 
-  try {
-    const res = await fetch('/api/upload', { method: 'POST', body: form });
-    const data = await res.json();
-    hideProcessing();
+        if (!res.ok) {
+          alert('Upload failed: ' + (data.error || 'Unknown error'));
+          return;
+        }
 
-    if (!res.ok) {
-      alert('Upload failed: ' + (data.error || 'Unknown error'));
-      return;
+        applyDocumentState(data);
+      } catch (e) {
+        hideProcessing();
+        alert('Network error during upload: ' + e.message);
+      }
     }
 
-    applyDocumentState(data);
-  } catch (e) {
-    hideProcessing();
-    alert('Network error during upload: ' + e.message);
-  }
-}
+    function showProcessing(text) {
+      $('processingText').textContent = text;
+      show($('processingBar'));
+    }
+    function hideProcessing() {
+      hide($('processingBar'));
+    }
 
-function showProcessing(text) {
-  $('processingText').textContent = text;
-  show($('processingBar'));
-}
-function hideProcessing() {
-  hide($('processingBar'));
-}
+    // ── Apply Document State to UI ────────────────────────
+    function applyDocumentState(data) {
+      activeDoc = data;
+      currentRiskData = null;
+      $('uploadCard').style.display = 'none';
 
-// ── Apply Document State to UI ────────────────────────
-function applyDocumentState(data) {
-  activeDoc = data;
-  $('uploadCard').style.display = 'none';
+      $('docTypeBadge').textContent = data.doc_type || 'Legal Document';
+      $('docFilename').textContent = data.filename;
+      $('statPages').textContent = data.pages;
+      $('statChunks').textContent = data.chunks;
+      $('docSummaryBox').textContent = data.summary || 'Document ready for Q&A and simplification.';
 
-  $('docTypeBadge').textContent = data.doc_type || 'Legal Document';
-  $('docFilename').textContent = data.filename;
-  $('statPages').textContent = data.pages;
-  $('statChunks').textContent = data.chunks;
-  $('docSummaryBox').textContent = data.summary || 'Document ready for Q&A and simplification.';
+      const statRisk = $('statRiskScore');
+      if (statRisk) {
+        statRisk.textContent = '...';
+        statRisk.style.color = 'var(--text)';
+      }
 
-  show($('docCard'));
-  show($('tabsWrap'));
+      show($('docCard'));
+      show($('tabsWrap'));
 
-  renderChips();
+      renderChips();
 
-  // Focus input
-  $('inputQuery').focus();
-}
+      // Pre-load risk analysis in background for quick score display
+      loadRiskAnalysis();
 
-function renderChips() {
-  const chipsCont = $('chipsContainer');
-  if (!chipsCont) return;
-  chipsCont.innerHTML = '';
+      // Focus input
+      $('inputQuery').focus();
+    }
 
-  const dict = I18N[currentLang] || I18N.en;
-  let suggestions = dict.defaultSuggestions;
+    function renderChips() {
+      const chipsCont = $('chipsContainer');
+      if (!chipsCont) return;
+      chipsCont.innerHTML = '';
 
-  if (currentLang === 'en' && activeDoc && activeDoc.suggestions && activeDoc.suggestions.length) {
-    suggestions = activeDoc.suggestions;
-  }
+      const dict = I18N[currentLang] || I18N.en;
+      let suggestions = dict.defaultSuggestions;
 
-  suggestions.forEach(q => {
-    const chip = document.createElement('div');
-    chip.className = 'chip';
-    chip.innerHTML = `💬 ${escHtml(q)}`;
-    chip.addEventListener('click', () => {
-      $('inputQuery').value = q;
-      askCurrentQuestion();
+      if (currentLang === 'en' && activeDoc && activeDoc.suggestions && activeDoc.suggestions.length) {
+        suggestions = activeDoc.suggestions;
+      }
+
+      suggestions.forEach(q => {
+        const chip = document.createElement('div');
+        chip.className = 'chip';
+        chip.innerHTML = `💬 ${escHtml(q)}`;
+        chip.addEventListener('click', () => {
+          $('inputQuery').value = q;
+          askCurrentQuestion();
+        });
+        chipsCont.appendChild(chip);
+      });
+    }
+
+    // ── Reset Document Button ─────────────────────────────
+    $('resetBtn').addEventListener('click', () => {
+      activeDoc = null;
+      currentRiskData = null;
+      hide($('docCard'));
+      hide($('tabsWrap'));
+      $('uploadCard').style.display = 'block';
+      fileInput.value = '';
+      $('answerContainer').classList.remove('show');
+      $('historySection').classList.remove('show');
+      $('historyList').innerHTML = '';
+      $('simplifyResults').innerHTML = '';
+      if ($('riskFlagsContainer')) $('riskFlagsContainer').innerHTML = '';
+      if ($('statRiskScore')) $('statRiskScore').textContent = '--';
+      if ($('riskScoreVal')) $('riskScoreVal').textContent = '--';
     });
-    chipsCont.appendChild(chip);
-  });
-}
 
-// ── Reset Document Button ─────────────────────────────
-$('resetBtn').addEventListener('click', () => {
-  activeDoc = null;
-  hide($('docCard'));
-  hide($('tabsWrap'));
-  $('uploadCard').style.display = 'block';
-  fileInput.value = '';
-  $('answerContainer').classList.remove('show');
-  $('historySection').classList.remove('show');
-  $('historyList').innerHTML = '';
-  $('simplifyResults').innerHTML = '';
-});
-
-// ── Ask Question ──────────────────────────────────────
-$('btnAsk').addEventListener('click', askCurrentQuestion);
-$('inputQuery').addEventListener('keydown', e => {
-  if (e.key === 'Enter') askCurrentQuestion();
-});
-
-async function askCurrentQuestion() {
-  const q = $('inputQuery').value.trim();
-  hide($('askWarn'));
-  hide($('askError'));
-  const dict = I18N[currentLang] || I18N.en;
-
-  if (!q) {
-    show($('askWarn'));
-    return;
-  }
-  if (!activeDoc) {
-    $('askError').textContent = dict.langName === 'हिंदी (Hindi)' ? 'कृपया पहले दस्तावेज़ अपलोड करें।' :
-                               (dict.langName === 'मराठी (Marathi)' ? 'कृपया आधी दस्तऐवज अपलोड करा.' : 'Please upload a document first.');
-    show($('askError'));
-    return;
-  }
-
-  $('btnAsk').disabled = true;
-  $('btnAsk').innerHTML = dict.btnAskAnalyzing;
-
-  try {
-    const res = await fetch('/api/ask', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ question: q, lang: currentLang })
+    // ── Ask Question ──────────────────────────────────────
+    $('btnAsk').addEventListener('click', askCurrentQuestion);
+    $('inputQuery').addEventListener('keydown', e => {
+      if (e.key === 'Enter') askCurrentQuestion();
     });
-    const data = await res.json();
 
-    if (!res.ok) {
-      $('askError').textContent = '❌ ' + (data.error || 'Failed to analyze question');
-      show($('askError'));
-      return;
+    async function askCurrentQuestion() {
+      const q = $('inputQuery').value.trim();
+      hide($('askWarn'));
+      hide($('askError'));
+      const dict = I18N[currentLang] || I18N.en;
+
+      if (!q) {
+        show($('askWarn'));
+        return;
+      }
+      if (!activeDoc) {
+        $('askError').textContent = dict.langName === 'हिंदी (Hindi)' ? 'कृपया पहले दस्तावेज़ अपलोड करें।' :
+          (dict.langName === 'मराठी (Marathi)' ? 'कृपया आधी दस्तऐवज अपलोड करा.' : 'Please upload a document first.');
+        show($('askError'));
+        return;
+      }
+
+      $('btnAsk').disabled = true;
+      $('btnAsk').innerHTML = dict.btnAskAnalyzing;
+
+      try {
+        const res = await fetch('/api/ask', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question: q, lang: currentLang })
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          $('askError').textContent = '❌ ' + (data.error || 'Failed to analyze question');
+          show($('askError'));
+          return;
+        }
+
+        renderAnswer(q, data);
+
+      } catch (e) {
+        $('askError').textContent = '❌ Connection error: ' + e.message;
+        show($('askError'));
+      } finally {
+        $('btnAsk').disabled = false;
+        $('btnAsk').textContent = dict.askBtn;
+      }
     }
 
-    renderAnswer(q, data);
+    function renderAnswer(question, data) {
+      const dict = I18N[currentLang] || I18N.en;
+      $('ansQuestionAsked').textContent = `Q: "${question}"`;
+      $('answerMainText').textContent = data.answer;
 
-  } catch (e) {
-    $('askError').textContent = '❌ Connection error: ' + e.message;
-    show($('askError'));
-  } finally {
-    $('btnAsk').disabled = false;
-    $('btnAsk').textContent = dict.askBtn;
-  }
-}
+      // Grounded badge & Page
+      const isFound = data.confidence > 0 &&
+        !data.answer.toLowerCase().includes('not mentioned in the uploaded document') &&
+        !data.answer.includes('मौजूद नहीं है') &&
+        !data.answer.includes('नमूद केलेली नाही');
 
-function renderAnswer(question, data) {
-  const dict = I18N[currentLang] || I18N.en;
-  $('ansQuestionAsked').textContent = `Q: "${question}"`;
-  $('answerMainText').textContent = data.answer;
+      const badgeWrap = $('groundedBadge');
+      if (isFound) {
+        badgeWrap.innerHTML = `<span class="badge badge-conf">${dict.groundedBadge}</span>`;
+        $('ansPageBadge').style.display = 'inline-flex';
+        $('ansPageBadge').textContent = dict.pageCitation.replace('{page}', data.page || 1);
 
-  // Grounded badge & Page
-  const isFound = data.confidence > 0 && 
-    !data.answer.toLowerCase().includes('not mentioned in the uploaded document') &&
-    !data.answer.includes('मौजूद नहीं है') &&
-    !data.answer.includes('नमूद केलेली नाही');
+        // Confidence meter
+        const confPct = Math.round(data.confidence * 100);
+        $('ansConfBadge').className = 'badge badge-conf';
+        $('ansConfBadge').style.display = 'inline-flex';
+        $('ansConfBar').style.width = `${confPct}%`;
+        $('ansConfVal').textContent = `${confPct}%`;
+        $('ansConfLabelText').textContent = dict.confLabel;
+      } else {
+        badgeWrap.innerHTML = `<span class="badge badge-none">${dict.notGroundedBadge}</span>`;
+        $('ansPageBadge').style.display = 'none';
+        $('ansConfBadge').style.display = 'none';
+      }
 
-  const badgeWrap = $('groundedBadge');
-  if (isFound) {
-    badgeWrap.innerHTML = `<span class="badge badge-conf">${dict.groundedBadge}</span>`;
-    $('ansPageBadge').style.display = 'inline-flex';
-    $('ansPageBadge').textContent = dict.pageCitation.replace('{page}', data.page || 1);
-    
-    // Confidence meter
-    const confPct = Math.round(data.confidence * 100);
-    $('ansConfBadge').className = 'badge badge-conf';
-    $('ansConfBadge').style.display = 'inline-flex';
-    $('ansConfBar').style.width = `${confPct}%`;
-    $('ansConfVal').textContent = `${confPct}%`;
-    $('ansConfLabelText').textContent = dict.confLabel;
-  } else {
-    badgeWrap.innerHTML = `<span class="badge badge-none">${dict.notGroundedBadge}</span>`;
-    $('ansPageBadge').style.display = 'none';
-    $('ansConfBadge').style.display = 'none';
-  }
+      // Source clause
+      const clauseBox = $('clauseBox');
+      const clauseContent = $('clauseContent');
+      if (data.clause && isFound) {
+        clauseContent.textContent = data.clause;
+        clauseBox.style.display = 'block';
+        clauseContent.classList.remove('open');
+        $('clauseChevron').textContent = '▾';
+      } else {
+        clauseBox.style.display = 'none';
+      }
 
-  // Source clause
-  const clauseBox = $('clauseBox');
-  const clauseContent = $('clauseContent');
-  if (data.clause && isFound) {
-    clauseContent.textContent = data.clause;
-    clauseBox.style.display = 'block';
-    clauseContent.classList.remove('open');
-    $('clauseChevron').textContent = '▾';
-  } else {
-    clauseBox.style.display = 'none';
-  }
+      show($('answerContainer'));
 
-  show($('answerContainer'));
+      // Save to History
+      qaHistory.unshift({ question, answer: data.answer, page: data.page });
+      updateHistoryUI();
+    }
 
-  // Save to History
-  qaHistory.unshift({ question, answer: data.answer, page: data.page });
-  updateHistoryUI();
-}
+    $('clauseHeader').addEventListener('click', () => {
+      const content = $('clauseContent');
+      content.classList.toggle('open');
+      $('clauseChevron').textContent = content.classList.contains('open') ? '▴' : '▾';
+    });
 
-$('clauseHeader').addEventListener('click', () => {
-  const content = $('clauseContent');
-  content.classList.toggle('open');
-  $('clauseChevron').textContent = content.classList.contains('open') ? '▴' : '▾';
-});
-
-function updateHistoryUI() {
-  if (qaHistory.length <= 1) return;
-  const list = $('historyList');
-  list.innerHTML = '';
-  qaHistory.slice(1, 6).forEach(h => {
-    const item = document.createElement('div');
-    item.className = 'history-item';
-    item.innerHTML = `
+    function updateHistoryUI() {
+      if (qaHistory.length <= 1) return;
+      const list = $('historyList');
+      list.innerHTML = '';
+      qaHistory.slice(1, 6).forEach(h => {
+        const item = document.createElement('div');
+        item.className = 'history-item';
+        item.innerHTML = `
       <div class="history-q">Q: ${escHtml(h.question)}</div>
       <div class="history-a">A: ${escHtml(h.answer)}</div>
     `;
-    list.appendChild(item);
-  });
-  show($('historySection'));
-}
-
-// ── Plain-Language Simplifier ─────────────────────────
-$('btnSimplify').addEventListener('click', async () => {
-  if (!activeDoc) return;
-  const dict = I18N[currentLang] || I18N.en;
-
-  $('btnSimplify').disabled = true;
-  $('simplifyProcessingText').textContent = dict.processingSimplify;
-  show($('simplifyProcessing'));
-  hide($('simplifyError'));
-  $('simplifyResults').innerHTML = '';
-
-  try {
-    const res = await fetch('/api/simplify', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ lang: currentLang })
-    });
-    const data = await res.json();
-    hideProcessing();
-    hide($('simplifyProcessing'));
-
-    if (!res.ok) {
-      $('simplifyError').textContent = '❌ ' + (data.error || 'Simplification failed');
-      show($('simplifyError'));
-      return;
+        list.appendChild(item);
+      });
+      show($('historySection'));
     }
 
-    renderSimplifiedChunks(data.chunks || []);
-  } catch (e) {
-    hide($('simplifyProcessing'));
-    $('simplifyError').textContent = '❌ Error: ' + e.message;
-    show($('simplifyError'));
-  } finally {
-    $('btnSimplify').disabled = false;
-  }
-});
+    // ── Plain-Language Simplifier ─────────────────────────
+    $('btnSimplify').addEventListener('click', async () => {
+      if (!activeDoc) return;
+      const dict = I18N[currentLang] || I18N.en;
 
-function renderSimplifiedChunks(chunks) {
-  const container = $('simplifyResults');
-  const dict = I18N[currentLang] || I18N.en;
-  container.innerHTML = '';
+      $('btnSimplify').disabled = true;
+      $('simplifyProcessingText').textContent = dict.processingSimplify;
+      show($('simplifyProcessing'));
+      hide($('simplifyError'));
+      $('simplifyResults').innerHTML = '';
 
-  if (!chunks.length) {
-    container.innerHTML = `<div style="color:var(--muted);padding:20px;text-align:center">${dict.noSimplifyText}</div>`;
-    return;
-  }
+      try {
+        const res = await fetch('/api/simplify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ lang: currentLang })
+        });
+        const data = await res.json();
+        hideProcessing();
+        hide($('simplifyProcessing'));
 
-  chunks.forEach(c => {
-    const card = document.createElement('div');
-    card.className = 'simplified-card';
+        if (!res.ok) {
+          $('simplifyError').textContent = '❌ ' + (data.error || 'Simplification failed');
+          show($('simplifyError'));
+          return;
+        }
 
-    // Parse simple markdown headings & lists
-    const formatted = formatMarkdown(c.text);
-    const titleText = dict.pageSummaryTitle.replace('{page}', c.page);
+        renderSimplifiedChunks(data.chunks || []);
+      } catch (e) {
+        hide($('simplifyProcessing'));
+        $('simplifyError').textContent = '❌ Error: ' + e.message;
+        show($('simplifyError'));
+      } finally {
+        $('btnSimplify').disabled = false;
+      }
+    });
 
-    card.innerHTML = `
+    function renderSimplifiedChunks(chunks) {
+      const container = $('simplifyResults');
+      const dict = I18N[currentLang] || I18N.en;
+      container.innerHTML = '';
+
+      if (!chunks.length) {
+        container.innerHTML = `<div style="color:var(--muted);padding:20px;text-align:center">${dict.noSimplifyText}</div>`;
+        return;
+      }
+
+      chunks.forEach(c => {
+        const card = document.createElement('div');
+        card.className = 'simplified-card';
+
+        // Parse simple markdown headings & lists
+        const formatted = formatMarkdown(c.text);
+        const titleText = dict.pageSummaryTitle.replace('{page}', c.page);
+
+        card.innerHTML = `
       <h3>${titleText}</h3>
       <div class="simplified-body">${formatted}</div>
     `;
-    container.appendChild(card);
-  });
-}
-
-function formatMarkdown(txt) {
-  if (!txt) return '';
-  let out = escHtml(txt);
-  // Bold
-  out = out.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-  // Subheadings
-  out = out.replace(/### (.*?)\n/g, '<h4 style="color:var(--v3);margin:14px 0 6px;font-size:15px">$1</h4>');
-  out = out.replace(/## (.*?)\n/g, '<h4 style="color:var(--v3);margin:16px 0 6px;font-size:16px">$1</h4>');
-  // Bullets
-  out = out.replace(/^\* (.*?)$/gm, '<li style="margin-bottom:4px">$1</li>');
-  out = out.replace(/(<li.*<\/li>)/s, '<ul style="margin:8px 0 12px 20px">$1</ul>');
-  // Newlines
-  out = out.replace(/\n\n/g, '<p style="margin-bottom:8px"></p>');
-  return out;
-}
-
-// ── Document Clauses Explorer ─────────────────────────
-async function loadClauses() {
-  const container = $('clausesContainer');
-  const dict = I18N[currentLang] || I18N.en;
-  if (container.children.length > 0) return; // already loaded
-
-  container.innerHTML = `<div class="processing-bar show"><div class="spinner"></div><span>${dict.loadingClausesText}</span></div>`;
-
-  try {
-    const res = await fetch('/api/clauses');
-    const data = await res.json();
-    container.innerHTML = '';
-
-    if (!data.pages || !data.pages.length) {
-      container.innerHTML = `<div style="color:var(--muted);padding:20px;text-align:center">${dict.noClausesText}</div>`;
-      return;
+        container.appendChild(card);
+      });
     }
 
-    data.pages.forEach(p => {
-      const pageEl = document.createElement('div');
-      pageEl.className = 'explorer-page';
-      const pageLabel = dict.pageCitation.replace('{page}', p.page);
-      pageEl.innerHTML = `
+    function formatMarkdown(txt) {
+      if (!txt) return '';
+      let out = escHtml(txt);
+      // Bold
+      out = out.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      // Subheadings
+      out = out.replace(/### (.*?)\n/g, '<h4 style="color:var(--v3);margin:14px 0 6px;font-size:15px">$1</h4>');
+      out = out.replace(/## (.*?)\n/g, '<h4 style="color:var(--v3);margin:16px 0 6px;font-size:16px">$1</h4>');
+      // Bullets
+      out = out.replace(/^\* (.*?)$/gm, '<li style="margin-bottom:4px">$1</li>');
+      out = out.replace(/(<li.*<\/li>)/s, '<ul style="margin:8px 0 12px 20px">$1</ul>');
+      // Newlines
+      out = out.replace(/\n\n/g, '<p style="margin-bottom:8px"></p>');
+      return out;
+    }
+
+    // ── Legal Risk & Red Flags Analyzer ───────────────────
+      let currentRiskData = null;
+      let currentRiskFilter = 'all';
+
+      async function loadRiskAnalysis(forceReload = false) {
+        if (!activeDoc) return;
+        const dict = I18N[currentLang] || I18N.en;
+
+        show($('riskProcessingBar'));
+        hide($('riskError'));
+        if (forceReload) $('riskFlagsContainer').innerHTML = '';
+
+        try {
+          const res = await fetch('/api/risk-analysis', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ lang: currentLang })
+          });
+          const data = await res.json();
+          hide($('riskProcessingBar'));
+
+          if (!res.ok) {
+            $('riskError').textContent = '❌ ' + (data.error || 'Risk analysis failed');
+            show($('riskError'));
+            return;
+          }
+
+          currentRiskData = data;
+          renderRiskAnalysis(data);
+
+        } catch (e) {
+          hide($('riskProcessingBar'));
+          $('riskError').textContent = '❌ Error: ' + e.message;
+          show($('riskError'));
+        }
+      }
+
+      function renderRiskAnalysis(data) {
+        const dict = I18N[currentLang] || I18N.en;
+        const score = data.score || 0;
+        const level = (data.risk_level || 'Low').toLowerCase();
+
+        // Update Score in Dashboard & Header Pill
+        $('riskScoreVal').textContent = score;
+        const statRisk = $('statRiskScore');
+        if (statRisk) {
+          statRisk.textContent = `${score}/100`;
+          statRisk.style.color = level === 'high' ? 'var(--rose)' : (level === 'moderate' ? 'var(--amber)' : 'var(--emerald)');
+        }
+
+        const gauge = $('riskGaugeBox');
+        if (gauge) gauge.className = 'risk-gauge-box ' + level;
+
+        // Level Badge
+        const badge = $('riskLevelBadge');
+        if (badge) {
+          badge.className = 'risk-badge-pill ' + (level === 'high' ? 'risk-badge-high' : (level === 'moderate' ? 'risk-badge-med' : 'risk-badge-low'));
+          const levelLabel = level === 'high' ? (dict.filterHigh.replace('🔴 ', '')) :
+            (level === 'moderate' ? (dict.filterMed.replace('🟡 ', '')) : (dict.filterLow.replace('🟢 ', '')));
+          badge.textContent = `${levelLabel.toUpperCase()} (${score}/100)`;
+        }
+
+        $('riskSummaryText').textContent = data.summary || '';
+        $('riskStatTotal').textContent = data.stats ? data.stats.total : (data.flags ? data.flags.length : 0);
+        $('riskStatHigh').textContent = data.stats ? data.stats.high : 0;
+        $('riskStatMed').textContent = data.stats ? data.stats.medium : 0;
+        $('riskStatLow').textContent = data.stats ? data.stats.low : 0;
+
+        filterAndRenderRiskCards();
+      }
+
+      function filterAndRenderRiskCards() {
+        const container = $('riskFlagsContainer');
+        const dict = I18N[currentLang] || I18N.en;
+        if (!container) return;
+        container.innerHTML = '';
+
+        if (!currentRiskData || !currentRiskData.flags || !currentRiskData.flags.length) {
+          container.innerHTML = `
+      <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.25);border-radius:var(--r-lg);padding:28px;text-align:center;color:#A7F3D0">
+        <div style="font-size:32px;margin-bottom:10px">🛡️</div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:6px">${dict.noRisksDetected}</div>
+        <div style="font-size:13px;color:var(--muted)">No harsh exit penalties, deposit forfeiture, or arbitrary clauses found in this document.</div>
+      </div>
+    `;
+          return;
+        }
+
+        const filtered = currentRiskData.flags.filter(f => {
+          if (currentRiskFilter === 'all') return true;
+          return (f.severity || '').toLowerCase() === currentRiskFilter;
+        });
+
+        if (!filtered.length) {
+          container.innerHTML = `
+      <div style="padding:30px;text-align:center;color:var(--muted);font-size:14px">
+        No flags match the selected filter (${currentRiskFilter}).
+      </div>
+    `;
+          return;
+        }
+
+        filtered.forEach(flag => {
+          const sev = (flag.severity || 'low').toLowerCase();
+          const card = document.createElement('div');
+          card.className = `risk-card sev-${sev}`;
+
+          const sevBadgeClass = sev === 'high' ? 'risk-badge-high' : (sev === 'medium' ? 'risk-badge-med' : 'risk-badge-low');
+          const sevBadgeText = sev === 'high' ? dict.filterHigh : (sev === 'medium' ? dict.filterMed : dict.filterLow);
+
+          card.innerHTML = `
+      <div class="risk-card-head">
+        <div class="risk-card-title">
+          <span class="risk-badge-pill ${sevBadgeClass}">${sevBadgeText}</span>
+          <span>${escHtml(flag.title)}</span>
+        </div>
+        <span class="badge badge-page">${dict.pageCitation.replace('{page}', flag.page || 1)}</span>
+      </div>
+
+      <div style="font-size:11.5px;font-weight:700;color:var(--subtle);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">
+        ${dict.sourceClauseFromDoc}
+      </div>
+      <div class="risk-clause-quote">${escHtml(flag.clause || '')}</div>
+
+      <div class="risk-explanation-box">
+        <strong style="color:var(--v3)">${dict.whyRiskyLabel}</strong> ${escHtml(flag.explanation || '')}
+      </div>
+
+      <div class="risk-counter-box">
+        <div>
+          <div style="font-size:11.5px;font-weight:700;color:#6EE7B7;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:4px">
+            ${dict.counterClauseLabel}
+          </div>
+          <div class="risk-counter-text">${escHtml(flag.recommendation || '')}</div>
+        </div>
+        <button class="btn-copy-counter" type="button" data-copy="${escAttr(flag.recommendation || '')}">
+          ${dict.copyProposalBtn}
+        </button>
+      </div>
+    `;
+
+          container.appendChild(card);
+        });
+
+        // Bind copy buttons
+        container.querySelectorAll('.btn-copy-counter').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const textToCopy = btn.dataset.copy;
+            if (navigator.clipboard) {
+              navigator.clipboard.writeText(textToCopy).then(() => {
+                showToast(dict.copiedToast);
+              }).catch(() => fallbackCopy(textToCopy, dict.copiedToast));
+            } else {
+              fallbackCopy(textToCopy, dict.copiedToast);
+            }
+          });
+        });
+      }
+
+      function showToast(msg) {
+        const toast = $('toastMsg');
+        if (!toast) return;
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2500);
+      }
+
+      function fallbackCopy(text, toastMsg) {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast(toastMsg);
+      }
+
+      function escAttr(str) {
+        if (!str) return '';
+        return str.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+      }
+
+      // Bind filter chips
+      document.querySelectorAll('.risk-filter-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          document.querySelectorAll('.risk-filter-chip').forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+          currentRiskFilter = chip.dataset.filter;
+          filterAndRenderRiskCards();
+        });
+      });
+
+      // Bind re-analyze button
+      const btnReanalyze = $('btnReanalyzeRisk');
+      if (btnReanalyze) {
+        btnReanalyze.addEventListener('click', () => {
+          loadRiskAnalysis(true);
+        });
+      }
+
+      // ── Document Clauses Explorer ─────────────────────────
+      async function loadClauses() {
+        const container = $('clausesContainer');
+        const dict = I18N[currentLang] || I18N.en;
+        if (container.children.length > 0) return; // already loaded
+
+        container.innerHTML = `<div class="processing-bar show"><div class="spinner"></div><span>${dict.loadingClausesText}</span></div>`;
+
+        try {
+          const res = await fetch('/api/clauses');
+          const data = await res.json();
+          container.innerHTML = '';
+
+          if (!data.pages || !data.pages.length) {
+            container.innerHTML = `<div style="color:var(--muted);padding:20px;text-align:center">${dict.noClausesText}</div>`;
+            return;
+          }
+
+          data.pages.forEach(p => {
+            const pageEl = document.createElement('div');
+            pageEl.className = 'explorer-page';
+            const pageLabel = dict.pageCitation.replace('{page}', p.page);
+            pageEl.innerHTML = `
         <div class="explorer-page-head">
           <span class="explorer-page-num">${pageLabel}</span>
           <span style="font-size:11.5px;color:var(--subtle)">${p.text.length} chars</span>
         </div>
         <div class="explorer-text">${escHtml(p.text)}</div>
       `;
-      container.appendChild(pageEl);
-    });
+            container.appendChild(pageEl);
+          });
 
-  } catch (e) {
-    container.innerHTML = `<div class="alert alert-err show">Failed to load clauses: ${e.message}</div>`;
-  }
-}
+        } catch (e) {
+          container.innerHTML = `<div class="alert alert-err show">Failed to load clauses: ${e.message}</div>`;
+        }
+      }
 
-// ── Helper ────────────────────────────────────────────
-function escHtml(str) {
-  if (!str) return '';
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-}
-</script>
+      // ── Helper ────────────────────────────────────────────
+      function escHtml(str) {
+        if (!str) return '';
+        return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+      }
+  </script>
 </body>
+
 </html>

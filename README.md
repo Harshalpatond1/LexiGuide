@@ -50,6 +50,7 @@ Legal agreements, tenancy contracts, sale deeds, affidavits, and consumer protec
 | Feature | Description |
 | :--- | :--- |
 | ⚡ **Document Intelligence** | Auto-detects whether the document is a *Rent Agreement, Rent Receipt, Sale Deed, Power of Attorney, Affidavit, Will, NDA, Employment Contract, or Partnership Deed*, and suggests 5 dynamic, context-specific questions. |
+| 🚨 **Legal Risk & Red Flag Analyzer** | Automatically audits documents for one-sided penalties, deposit forfeiture traps, arbitrary termination, lock-in clauses, and unmetered liability with a 0–100 Risk Score, severity color badges, and copyable counter-proposals. |
 | 🔍 **Dense Semantic Search (FAISS)** | Uses `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` with normalized cosine similarity indexing for sub-millisecond retrieval of relevant clauses. |
 | 🛡️ **Factual Guardrails & Verification** | If a query asks for information not present in the document, LexiGuide explicitly flags it rather than fabricating facts. |
 | 🎯 **Exact Clause & Page Citations** | Every answer provides the originating page number, a highlighted snippet of the raw legal clause, and a confidence indicator (**High**, **Medium**, or **Low**). |
@@ -344,6 +345,6 @@ This project is licensed under the **MIT License**.
 ---
 
 <div align="center">
-  <b>Developed with ❤️ for NLP & AI-driven Legal Accessibility</b><br>
+  <b>Developed By Harshal Patond ❤️</b><br>
   <sub>Maintained by <a href="https://github.com/Harshalpatond1">Harshal Patond</a></sub>
 </div>

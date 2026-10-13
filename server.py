@@ -9,6 +9,7 @@ from chunker import split_into_chunks
 from retriever import create_index, search
 from qa_engine import extract_answer, _get_gemini, GEMINI_MODELS
 from simplifier import simplify_chunks
+from risk_analyzer import analyze_document_risks
 
 app = Flask(__name__, static_folder="static")
 app.secret_key = "lexiguide-secret-2024-secure-key"
@@ -238,6 +239,7 @@ def get_current_document():
 
 _ask_cache = {}
 _simplify_cache_store = {}
+_risk_cache_store = {}
 
 
 @app.route("/api/ask", methods=["POST"])
@@ -314,6 +316,31 @@ def simplify():
     resp_payload = {"chunks": output, "lang": lang}
     _simplify_cache_store[cache_key] = resp_payload
     return jsonify(resp_payload)
+
+
+@app.route("/api/risk-analysis", methods=["POST"])
+def risk_analysis():
+    doc = _get_active_doc()
+    if not doc:
+        return jsonify({"error": "No document uploaded yet. Please upload a PDF first."}), 400
+
+    body = request.get_json(force=True, silent=True) or {}
+    lang = (body.get("lang") or "en").strip().lower()
+    if lang not in ["en", "hi", "mr"]:
+        lang = "en"
+
+    cache_key = (doc.get("filename", ""), lang)
+    if cache_key in _risk_cache_store:
+        return jsonify(_risk_cache_store[cache_key])
+
+    try:
+        results = analyze_document_risks(doc.get("pages", []), doc.get("chunks", []), lang=lang)
+    except Exception as e:
+        print(f"[Risk Analysis Error]: {e}")
+        return jsonify({"error": f"Risk analysis failed: {str(e)}"}), 500
+
+    _risk_cache_store[cache_key] = results
+    return jsonify(results)
 
 
 @app.route("/api/clauses", methods=["GET"])
